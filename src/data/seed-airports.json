@@ -1,0 +1,17 @@
+[
+  { "iata": "LHR", "city": "London", "country": "United Kingdom", "region": "Europe", "latitude": 51.47, "longitude": -0.4543 },
+  { "iata": "JFK", "city": "New York", "country": "United States", "region": "North America", "latitude": 40.6413, "longitude": -73.7781 },
+  { "iata": "DXB", "city": "Dubai", "country": "United Arab Emirates", "region": "Middle East", "latitude": 25.2532, "longitude": 55.3657 },
+  { "iata": "SIN", "city": "Singapore", "country": "Singapore", "region": "Asia Pacific", "latitude": 1.3644, "longitude": 103.9915 },
+  { "iata": "GRU", "city": "Sao Paulo", "country": "Brazil", "region": "Latin America", "latitude": -23.4356, "longitude": -46.4731 },
+  { "iata": "MAD", "city": "Madrid", "country": "Spain", "region": "Europe", "latitude": 40.4983, "longitude": -3.5676 },
+  { "iata": "CPT", "city": "Cape Town", "country": "South Africa", "region": "Africa", "latitude": -33.9696, "longitude": 18.5972 },
+  { "iata": "CDG", "city": "Paris", "country": "France", "region": "Europe", "latitude": 49.0097, "longitude": 2.5479 },
+  { "iata": "HND", "city": "Tokyo", "country": "Japan", "region": "Asia Pacific", "latitude": 35.5494, "longitude": 139.7798 },
+  { "iata": "SYD", "city": "Sydney", "country": "Australia", "region": "Asia Pacific", "latitude": -33.9399, "longitude": 151.1753 },
+  { "iata": "MEX", "city": "Mexico City", "country": "Mexico", "region": "Latin America", "latitude": 19.4361, "longitude": -99.0719 },
+  { "iata": "FRA", "city": "Frankfurt", "country": "Germany", "region": "Europe", "latitude": 50.0379, "longitude": 8.5622 },
+  { "iata": "ORD", "city": "Chicago", "country": "United States", "region": "North America", "latitude": 41.9742, "longitude": -87.9073 },
+  { "iata": "AMS", "city": "Amsterdam", "country": "Netherlands", "region": "Europe", "latitude": 52.3105, "longitude": 4.7683 },
+  { "iata": "BKK", "city": "Bangkok", "country": "Thailand", "region": "Asia Pacific", "latitude": 13.69, "longitude": 100.7501 }
+]
