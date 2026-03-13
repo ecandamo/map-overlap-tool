@@ -8,9 +8,20 @@ type DataTableProps = {
   rows: MapPoint[];
   volumeColumns?: "api" | "client" | "both";
   clientLabel?: string;
+  volumeUnitsLabel?: string;
+  variant?: "default" | "feature";
+  maxBodyHeightClassName?: string;
 };
 
-export function DataTable({ title, rows, volumeColumns = "both", clientLabel = "Client" }: DataTableProps) {
+export function DataTable({
+  title,
+  rows,
+  volumeColumns = "both",
+  clientLabel = "Client",
+  volumeUnitsLabel = "Volume",
+  variant = "default",
+  maxBodyHeightClassName
+}: DataTableProps) {
   const sortedRows = useMemo(
     () => [...rows].sort((a, b) => b.totalVolume - a.totalVolume || a.iata.localeCompare(b.iata)),
     [rows]
@@ -20,21 +31,27 @@ export function DataTable({ title, rows, volumeColumns = "both", clientLabel = "
   const columnCount = 4 + (showApiVolume ? 1 : 0) + (showClientVolume ? 1 : 0);
 
   return (
-    <section className="rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
+    <section
+      className={
+        variant === "feature"
+          ? "rounded-[2rem] border border-black/10 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/5"
+          : "rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5"
+      }
+    >
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
         <span className="text-sm text-slate-500 dark:text-slate-400">{rows.length} Airports</span>
       </div>
-      <div className="overflow-x-auto">
+      <div className={`overflow-x-auto ${maxBodyHeightClassName ?? ""}`}>
         <table className="min-w-full text-sm">
-          <thead className="text-left text-slate-500 dark:text-slate-400">
+          <thead className="sticky top-0 text-left text-slate-500 dark:text-slate-400">
             <tr>
               <th className="pb-3 pr-4">IATA</th>
               <th className="pb-3 pr-4">City</th>
               <th className="pb-3 pr-4">Country</th>
               <th className="pb-3 pr-4">Region</th>
-              {showApiVolume ? <th className="pb-3 pr-4">API Volume</th> : null}
-              {showClientVolume ? <th className="pb-3">{clientLabel} Volume</th> : null}
+              {showApiVolume ? <th className="pb-3 pr-4">API {volumeUnitsLabel}</th> : null}
+              {showClientVolume ? <th className="pb-3">{clientLabel} {volumeUnitsLabel}</th> : null}
             </tr>
           </thead>
           <tbody>

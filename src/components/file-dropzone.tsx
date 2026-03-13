@@ -4,16 +4,24 @@ import { ChangeEvent, DragEvent, KeyboardEvent, MouseEvent, useRef, useState } f
 
 import { cn } from "@/lib/utils";
 
+type ValidationTooltip = {
+  statusLabel: string;
+  statusTone: "neutral" | "good" | "warning";
+  summary: string;
+  details?: string[];
+};
+
 type FileDropzoneProps = {
   label: string;
   description: string;
   onFileSelect: (file: File) => void;
   statusText?: string;
+  validation?: ValidationTooltip;
   templateLabel?: string;
   onTemplateDownload?: () => void;
 };
 
-export function FileDropzone({ label, description, onFileSelect, statusText, templateLabel, onTemplateDownload }: FileDropzoneProps) {
+export function FileDropzone({ label, description, onFileSelect, statusText, validation, templateLabel, onTemplateDownload }: FileDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -50,6 +58,10 @@ export function FileDropzone({ label, description, onFileSelect, statusText, tem
     onTemplateDownload?.();
   }
 
+  function onValidationClick(event: MouseEvent<HTMLDivElement>) {
+    event.stopPropagation();
+  }
+
   return (
     <div
       role="button"
@@ -63,12 +75,38 @@ export function FileDropzone({ label, description, onFileSelect, statusText, tem
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
       className={cn(
-        "group flex min-h-52 w-full flex-col items-start justify-between rounded-[2rem] border-2 border-dashed p-6 text-left transition",
+        "group relative flex min-h-52 w-full flex-col items-start justify-between rounded-[2rem] border-2 border-dashed p-6 text-left transition",
         dragging
           ? "border-sky-500 bg-sky-500/10"
           : "border-black/10 bg-white/80 hover:border-slate-400 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
       )}
     >
+      {validation ? (
+        <div className="group/validation absolute right-5 top-5 z-10" onClick={onValidationClick}>
+          <span
+            className={cn(
+              "inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]",
+              validation.statusTone === "warning"
+                ? "bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-200"
+                : validation.statusTone === "good"
+                  ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200"
+                  : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+            )}
+          >
+            {validation.statusLabel}
+          </span>
+          {validation.details && validation.details.length > 0 ? (
+            <div className="pointer-events-none absolute right-0 top-full z-20 mt-3 hidden w-72 rounded-2xl border border-black/10 bg-white/95 p-3 text-left text-xs text-slate-600 shadow-lg shadow-slate-300/30 backdrop-blur group-hover/validation:block dark:border-white/10 dark:bg-slate-950/95 dark:text-slate-300 dark:shadow-none">
+              <p className="font-semibold text-slate-900 dark:text-slate-100">Validation details</p>
+              <ul className="mt-2 space-y-1.5">
+                {validation.details.map((detail) => (
+                  <li key={detail}>{detail}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
       <div className="space-y-3">
         <span className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-white dark:bg-white dark:text-slate-900">
           {label}
@@ -91,7 +129,7 @@ export function FileDropzone({ label, description, onFileSelect, statusText, tem
           ) : null}
         </div>
       </div>
-      {statusText ? <div className="text-sm text-slate-500 dark:text-slate-400">{statusText}</div> : null}
+      {statusText ? <div className="w-full text-sm text-slate-500 dark:text-slate-400">{statusText}</div> : null}
       <input ref={inputRef} hidden type="file" accept=".csv,text/csv" onChange={onChange} />
     </div>
   );

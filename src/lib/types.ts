@@ -66,6 +66,11 @@ export type SummaryMetrics = {
   clientDestinations: number;
   overlapDestinations: number;
   overlapPercent: number;
+  potentialOverlapPercent: number;
+  potentialOverlapScore: number;
+  potentialCityMatches: number;
+  potentialCountryMatches: number;
+  potentialRegionMatches: number;
   topOverlapAirports: MapPoint[];
 };
 

@@ -4,9 +4,10 @@ type ValidationPanelProps = {
   result?: ParsedCsvResult;
   title: string;
   embedded?: boolean;
+  compact?: boolean;
 };
 
-export function ValidationPanel({ result, title, embedded = false }: ValidationPanelProps) {
+export function ValidationPanel({ result, title, embedded = false, compact = false }: ValidationPanelProps) {
   const issueCount = result?.issues.length ?? 0;
   const unknownCount = result?.unknownIatas.length ?? 0;
   const needsReview = issueCount > 0 || unknownCount > 0;
@@ -24,32 +25,34 @@ export function ValidationPanel({ result, title, embedded = false }: ValidationP
     <details
       open={needsReview}
       className={
-        embedded
-          ? "rounded-[1.5rem] border border-black/5 bg-slate-50/80 p-5 dark:border-white/10 dark:bg-slate-950/40"
+        compact
+          ? "rounded-[1.5rem] border border-black/10 bg-white/70 p-4 shadow-sm dark:border-white/10 dark:bg-white/5"
+          : embedded
+            ? "rounded-[1.5rem] border border-black/5 bg-slate-50/80 p-5 dark:border-white/10 dark:bg-slate-950/40"
           : "rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5"
       }
     >
-      <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+      <summary className={`flex cursor-pointer list-none justify-between gap-4 ${compact ? "items-center" : "items-start"}`}>
         <div>
-          <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{summaryParts.join(" · ")}</p>
+          <h3 className={`${compact ? "text-sm" : "text-lg"} font-semibold text-slate-950 dark:text-white`}>{title}</h3>
+          <p className={`mt-1 ${compact ? "text-xs" : "text-sm"} text-slate-500 dark:text-slate-400`}>{summaryParts.join(" · ")}</p>
         </div>
         <span
           className={
             needsReview
-              ? "rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-500/20 dark:text-amber-200"
-              : "rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+              ? "rounded-full bg-amber-100 px-3 py-1 text-[11px] font-semibold text-amber-800 dark:bg-amber-500/20 dark:text-amber-200"
+              : "rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
           }
         >
           {statusLabel}
         </span>
       </summary>
-      <div className="mt-4 space-y-4 text-sm">
+      <div className={`space-y-4 ${compact ? "mt-3 text-xs" : "mt-4 text-sm"}`}>
         {!result ? (
           <p className="text-slate-500 dark:text-slate-400">Upload a CSV to See Validation Details.</p>
         ) : (
           <>
-            <div className="rounded-2xl bg-slate-100/80 p-3 text-slate-600 dark:bg-slate-900/60 dark:text-slate-300">
+            <div className={`rounded-2xl bg-slate-100/80 text-slate-600 dark:bg-slate-900/60 dark:text-slate-300 ${compact ? "p-2.5" : "p-3"}`}>
               {result.fileName} Loaded with {result.normalizedRows.length} Unique Airports.
             </div>
             {needsReview ? (
