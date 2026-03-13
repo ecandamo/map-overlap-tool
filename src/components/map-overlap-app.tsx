@@ -391,13 +391,13 @@ export function MapOverlapApp() {
                 <>
                   <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] sm:items-stretch">
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Current Overlap %</p>
-                      <p className="mt-2 text-4xl font-semibold text-slate-950 dark:text-white">{formatPercent(summary.overlapPercent)}</p>
+                      <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Current Overlap %</p>
+                      <p className="mt-2 text-5xl font-semibold text-slate-950 dark:text-white">{formatPercent(summary.overlapPercent)}</p>
                     </div>
                     <div className="hidden w-px bg-black/10 sm:block dark:bg-white/10" aria-hidden="true" />
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Potential Overlap %</p>
+                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Potential Overlap %</p>
                         <div className="group/tooltip relative">
                           <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-slate-300 text-[10px] font-semibold text-slate-500 dark:border-slate-600 dark:text-slate-400">
                             i
@@ -407,7 +407,7 @@ export function MapOverlapApp() {
                           </div>
                         </div>
                       </div>
-                      <p className="mt-2 text-4xl font-semibold text-slate-950 dark:text-white">{formatPercent(summary.potentialOverlapPercent)}</p>
+                      <p className="mt-2 text-5xl font-semibold text-slate-950 dark:text-white">{formatPercent(summary.potentialOverlapPercent)}</p>
                     </div>
                   </div>
                 </>
