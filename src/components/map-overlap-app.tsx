@@ -52,6 +52,8 @@ async function parseCsv(args: {
 export function MapOverlapApp() {
   const region = useAppStore((state) => state.region);
   const setRegion = useAppStore((state) => state.setRegion);
+  const clientName = useAppStore((state) => state.clientName);
+  const setClientName = useAppStore((state) => state.setClientName);
   const colors = useAppStore((state) => state.colors);
   const setColor = useAppStore((state) => state.setColor);
   const theme = useAppStore((state) => state.theme);
@@ -95,6 +97,8 @@ export function MapOverlapApp() {
   const filteredPoints = useMemo(() => filterPointsByRegion(points, region), [points, region]);
   const summary = useMemo(() => computeSummary(filteredPoints), [filteredPoints]);
   const regions = useMemo(() => getRegions(points), [points]);
+  const clientDisplayName = useMemo(() => clientName.trim() || "Client", [clientName]);
+  const clientOnlyLabel = `${clientDisplayName}-Only`;
   const categorizedRows = useMemo(
     () => ({
       apiOnly: filteredPoints.filter((point) => point.category === "api-only"),
@@ -206,7 +210,7 @@ export function MapOverlapApp() {
                 Layover Destinations Overlap Map
               </h1>
               <p className="mt-4 text-base text-slate-600 dark:text-slate-300 md:text-lg">
-                Upload API and client CSVs, validate them, resolve airports from the built-in reference database, and explore overlap by region.
+                Upload API and {clientDisplayName} CSVs, validate them, resolve airports from the built-in reference database, and explore overlap by region.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -224,7 +228,7 @@ export function MapOverlapApp() {
           <section className="rounded-[2rem] border border-dashed border-black/10 bg-white/60 p-10 text-center dark:border-white/10 dark:bg-white/5">
             <h2 className="text-2xl font-semibold text-slate-950 dark:text-white">Start with Two CSVs or Load the Demo</h2>
             <p className="mt-3 text-slate-600 dark:text-slate-300">
-              The app will validate uploads, combine duplicates, flag unknown IATA codes, and render API-only, client-only, and overlap destinations together.
+              {`The app will validate uploads, combine duplicates, flag unknown IATA codes, and render API-only, ${clientOnlyLabel.toLowerCase()}, and overlap destinations together.`}
             </p>
           </section>
         ) : null}
@@ -241,32 +245,25 @@ export function MapOverlapApp() {
             }
           />
           <FileDropzone
-            label="Prospect Client Layovers"
-            description="Upload the client layover destination file. Unknown IATA codes stay visible in validation but are excluded from the map."
+            label={`${clientDisplayName} Layovers`}
+            description={`Upload the ${clientDisplayName} layover destination file. Unknown IATA codes stay visible in validation but are excluded from the map.`}
             onFileSelect={(file) => void handleFile(file, "client")}
             statusText={clientResult ? `${clientResult.fileName} Loaded with ${clientResult.normalizedRows.length} Unique Airports.` : undefined}
-            templateLabel="Client Template"
+            templateLabel={`${clientDisplayName} Template`}
             onTemplateDownload={() =>
               downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")
             }
           />
         </section>
 
-        <section className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-[1.75rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Airport Reference Records</p>
-            <p className="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">{formatNumber(airportMap.size)}</p>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Built-in airport master rows available for IATA-to-coordinate matching.</p>
+        <section className="rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-slate-950 dark:text-white">Validation</h3>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Review Issues and Unknown IATA Codes for Each Uploaded Source.</p>
           </div>
-          <div className="rounded-[1.75rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">API Rows Matched</p>
-            <p className="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">{formatNumber(apiResult?.matchedIatas.length ?? 0)}</p>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Unique API IATA codes currently resolvable from the airport reference set.</p>
-          </div>
-          <div className="rounded-[1.75rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Client Rows Matched</p>
-            <p className="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">{formatNumber(clientResult?.matchedIatas.length ?? 0)}</p>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Unique client IATA codes currently resolvable from the airport reference set.</p>
+          <div className="grid gap-4 xl:grid-cols-2">
+            <ValidationPanel result={apiResult} title="API Validation" embedded />
+            <ValidationPanel result={clientResult} title={`${clientDisplayName} Validation`} embedded />
           </div>
         </section>
 
@@ -277,25 +274,36 @@ export function MapOverlapApp() {
               <span className="text-sm text-slate-500 dark:text-slate-400">{loading || !airportsLoaded ? "Loading..." : "Ready"}</span>
             </div>
             <div className="mt-4 space-y-4">
-              <label className="block">
-                <span className="mb-2 block text-sm font-medium">Region Filter</span>
-                <select
-                  value={region}
-                  onChange={(event) => setRegion(event.target.value)}
-                  className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-slate-950"
-                >
-                  <option>{REGION_ALL}</option>
-                  {regions.map((regionValue) => (
-                    <option key={regionValue}>{regionValue}</option>
-                  ))}
-                </select>
-              </label>
+              <div className="grid gap-4 md:grid-cols-2">
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium">Client Name</span>
+                  <input
+                    value={clientName}
+                    onChange={(event) => setClientName(event.target.value)}
+                    placeholder="Enter Client Name"
+                    className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-slate-950"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium">Region Filter</span>
+                  <select
+                    value={region}
+                    onChange={(event) => setRegion(event.target.value)}
+                    className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-slate-950"
+                  >
+                    <option>{REGION_ALL}</option>
+                    {regions.map((regionValue) => (
+                      <option key={regionValue}>{regionValue}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Showing {formatNumber(filteredPoints.length)} mapped destinations in {region === REGION_ALL ? "all regions" : region}.
               </p>
               <div className="flex flex-wrap gap-3">
                 <ColorPicker label="API-Only" value={colors.apiOnly} onChange={(value) => setColor("apiOnly", value)} />
-                <ColorPicker label="Client-Only" value={colors.clientOnly} onChange={(value) => setColor("clientOnly", value)} />
+                <ColorPicker label={clientOnlyLabel} value={colors.clientOnly} onChange={(value) => setColor("clientOnly", value)} />
                 <ColorPicker label="Overlap" value={colors.overlap} onChange={(value) => setColor("overlap", value)} />
               </div>
             </div>
@@ -304,7 +312,7 @@ export function MapOverlapApp() {
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <SummaryCard label="API Destinations" value={formatNumber(summary.apiDestinations)} accent={colors.apiOnly} />
-          <SummaryCard label="Client Destinations" value={formatNumber(summary.clientDestinations)} accent={colors.clientOnly} />
+          <SummaryCard label={`${clientDisplayName} Destinations`} value={formatNumber(summary.clientDestinations)} accent={colors.clientOnly} />
           <SummaryCard label="Overlap Destinations" value={formatNumber(summary.overlapDestinations)} accent={colors.overlap} />
           <SummaryCard
             label="Overlap %"
@@ -314,20 +322,15 @@ export function MapOverlapApp() {
         </section>
 
         <section>
-          <OverlapMap points={filteredPoints} region={region} colors={colors} />
+          <OverlapMap points={filteredPoints} region={region} clientLabel={clientDisplayName} colors={colors} />
         </section>
 
-        <section className="grid gap-6 xl:grid-cols-2">
-          <ValidationPanel result={apiResult} title="API Validation" />
-          <ValidationPanel result={clientResult} title="Client Validation" />
-        </section>
-
-        <TopOverlapList rows={summary.topOverlapAirports} />
+        <TopOverlapList rows={summary.topOverlapAirports} clientLabel={clientDisplayName} />
 
         <section className="grid gap-6 xl:grid-cols-[0.95fr_0.95fr_1.3fr]">
           <DataTable title="API-Only Destinations" rows={categorizedRows.apiOnly} volumeColumns="api" />
-          <DataTable title="Client-Only Destinations" rows={categorizedRows.clientOnly} volumeColumns="client" />
-          <DataTable title="Overlap Destinations" rows={categorizedRows.overlap} volumeColumns="both" />
+          <DataTable title={`${clientOnlyLabel} Destinations`} rows={categorizedRows.clientOnly} volumeColumns="client" clientLabel={clientDisplayName} />
+          <DataTable title="Overlap Destinations" rows={categorizedRows.overlap} volumeColumns="both" clientLabel={clientDisplayName} />
         </section>
       </div>
     </main>

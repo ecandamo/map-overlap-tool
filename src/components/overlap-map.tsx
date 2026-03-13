@@ -13,6 +13,7 @@ import { formatNumber } from "@/lib/utils";
 type OverlapMapProps = {
   points: MapPoint[];
   region: string;
+  clientLabel: string;
   colors: {
     apiOnly: string;
     clientOnly: string;
@@ -26,7 +27,7 @@ type TooltipState = {
   point: MapPoint;
 };
 
-export function OverlapMap({ points, region, colors }: OverlapMapProps) {
+export function OverlapMap({ points, region, clientLabel, colors }: OverlapMapProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const maxVolume = Math.max(...points.map((point) => point.totalVolume), 1);
@@ -68,16 +69,27 @@ export function OverlapMap({ points, region, colors }: OverlapMapProps) {
   }, [points, region]);
   const legendItems = [
     { label: "API-Only", color: colors.apiOnly },
-    { label: "Client-Only", color: colors.clientOnly },
+    { label: `${clientLabel}-Only`, color: colors.clientOnly },
     { label: "Overlap", color: colors.overlap }
   ];
+  const clientOnlyLabel = `${clientLabel}-Only`;
+
+  function getCategoryLabel(category: MapPoint["category"]) {
+    if (category === "api-only") {
+      return "API-Only";
+    }
+    if (category === "client-only") {
+      return clientOnlyLabel;
+    }
+    return "Overlap";
+  }
 
   return (
     <div className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.16),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(249,115,22,0.18),_transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.96),rgba(241,245,249,0.82))] p-4 dark:border-white/10 dark:bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.16),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(251,146,60,0.16),_transparent_28%),linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.86))]">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-slate-950 dark:text-white">Global Overlap Map</h3>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Shared Bubble Scale Across API-Only, Client-Only, and Overlap Airports.</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{`Shared Bubble Scale Across API-Only, ${clientOnlyLabel}, and Overlap Airports.`}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {legendItems.map((item) => (
@@ -155,12 +167,12 @@ export function OverlapMap({ points, region, colors }: OverlapMapProps) {
           style={{ left: tooltip.x + 12, top: tooltip.y + 12 }}
         >
           <div className="font-semibold text-slate-950 dark:text-white">{tooltip.point.iata}</div>
-          <div className="text-slate-500 dark:text-slate-400">{tooltip.point.category}</div>
+          <div className="text-slate-500 dark:text-slate-400">{getCategoryLabel(tooltip.point.category)}</div>
           <div className="text-slate-500 dark:text-slate-400">
             {tooltip.point.city}, {tooltip.point.country}
           </div>
           <div className="mt-2 text-slate-700 dark:text-slate-200">API Volume: {formatNumber(tooltip.point.apiVolume)}</div>
-          <div className="text-slate-700 dark:text-slate-200">Client Volume: {formatNumber(tooltip.point.clientVolume)}</div>
+          <div className="text-slate-700 dark:text-slate-200">{clientLabel} Volume: {formatNumber(tooltip.point.clientVolume)}</div>
         </div>
       ) : null}
     </div>

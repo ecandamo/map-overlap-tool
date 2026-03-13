@@ -7,9 +7,10 @@ type DataTableProps = {
   title: string;
   rows: MapPoint[];
   volumeColumns?: "api" | "client" | "both";
+  clientLabel?: string;
 };
 
-export function DataTable({ title, rows, volumeColumns = "both" }: DataTableProps) {
+export function DataTable({ title, rows, volumeColumns = "both", clientLabel = "Client" }: DataTableProps) {
   const sortedRows = useMemo(
     () => [...rows].sort((a, b) => b.totalVolume - a.totalVolume || a.iata.localeCompare(b.iata)),
     [rows]
@@ -33,7 +34,7 @@ export function DataTable({ title, rows, volumeColumns = "both" }: DataTableProp
               <th className="pb-3 pr-4">Country</th>
               <th className="pb-3 pr-4">Region</th>
               {showApiVolume ? <th className="pb-3 pr-4">API Volume</th> : null}
-              {showClientVolume ? <th className="pb-3">Client Volume</th> : null}
+              {showClientVolume ? <th className="pb-3">{clientLabel} Volume</th> : null}
             </tr>
           </thead>
           <tbody>

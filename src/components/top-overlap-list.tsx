@@ -3,9 +3,10 @@ import { formatNumber } from "@/lib/utils";
 
 type TopOverlapListProps = {
   rows: MapPoint[];
+  clientLabel?: string;
 };
 
-export function TopOverlapList({ rows }: TopOverlapListProps) {
+export function TopOverlapList({ rows, clientLabel = "Client" }: TopOverlapListProps) {
   return (
     <section className="rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
       <div className="mb-4 flex items-center justify-between">
@@ -23,7 +24,7 @@ export function TopOverlapList({ rows }: TopOverlapListProps) {
                   {index + 1}. {row.iata} · {row.city}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  API {formatNumber(row.apiVolume)} · Client {formatNumber(row.clientVolume)}
+                  API {formatNumber(row.apiVolume)} · {clientLabel} {formatNumber(row.clientVolume)}
                 </p>
               </div>
               <div className="text-right">
