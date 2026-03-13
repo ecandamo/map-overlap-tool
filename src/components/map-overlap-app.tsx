@@ -238,7 +238,7 @@ export function MapOverlapApp() {
             label="API Hotel Contracts"
             description="Expected columns: IATA, city, country, region, volume. Duplicate airport rows are summed during normalization."
             onFileSelect={(file) => void handleFile(file, "api")}
-            templateLabel="API Template"
+            templateLabel="API Upload Template"
             onTemplateDownload={() =>
               downloadTextFile("api-template.csv", "IATA,city,country,region,volume\nLHR,London,United Kingdom,Europe,320\nJFK,New York,United States,North America,220\n")
             }
@@ -247,7 +247,7 @@ export function MapOverlapApp() {
             label={`${clientDisplayName} Layovers`}
             description={`Upload the ${clientDisplayName} layover destination file. Unknown IATA codes stay visible in validation but are excluded from the map.`}
             onFileSelect={(file) => void handleFile(file, "client")}
-            templateLabel={`${clientDisplayName} Template`}
+            templateLabel={`${clientDisplayName} Upload Template`}
             onTemplateDownload={() =>
               downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")
             }
@@ -272,7 +272,7 @@ export function MapOverlapApp() {
               <span className="text-sm text-slate-500 dark:text-slate-400">{loading || !airportsLoaded ? "Loading..." : "Ready"}</span>
             </div>
             <div className="mt-4 space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-x-12 gap-y-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1.05fr)_minmax(0,1.6fr)] lg:items-start">
                 <label className="block">
                   <span className="mb-2 block text-sm font-medium">Client Name</span>
                   <input
@@ -294,15 +294,19 @@ export function MapOverlapApp() {
                       <option key={regionValue}>{regionValue}</option>
                     ))}
                   </select>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                    Showing {formatNumber(filteredPoints.length)} mapped destinations in {region === REGION_ALL ? "all regions" : region}.
+                  </p>
                 </label>
-              </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Showing {formatNumber(filteredPoints.length)} mapped destinations in {region === REGION_ALL ? "all regions" : region}.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <ColorPicker label="API-Only" value={colors.apiOnly} onChange={(value) => setColor("apiOnly", value)} />
-                <ColorPicker label={clientOnlyLabel} value={colors.clientOnly} onChange={(value) => setColor("clientOnly", value)} />
-                <ColorPicker label="Overlap" value={colors.overlap} onChange={(value) => setColor("overlap", value)} />
+                <div>
+                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Map Colors</p>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    <ColorPicker label="API-Only" value={colors.apiOnly} onChange={(value) => setColor("apiOnly", value)} />
+                    <ColorPicker label={clientOnlyLabel} value={colors.clientOnly} onChange={(value) => setColor("clientOnly", value)} />
+                    <ColorPicker label="Overlap" value={colors.overlap} onChange={(value) => setColor("overlap", value)} />
+                  </div>
+                  <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Choose the colors used for each destination type.</p>
+                </div>
               </div>
             </div>
           </div>

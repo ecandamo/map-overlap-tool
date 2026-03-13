@@ -78,7 +78,7 @@ export function FileDropzone({ label, description, onFileSelect, statusText, tem
           <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">{description}</p>
           {templateLabel && onTemplateDownload ? (
             <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">
-              Download the {templateLabel}{" "}
+              Download {templateLabel}{" "}
               <button
                 type="button"
                 onClick={onTemplateClick}
@@ -91,7 +91,7 @@ export function FileDropzone({ label, description, onFileSelect, statusText, tem
           ) : null}
         </div>
       </div>
-      <div className="text-sm text-slate-500 dark:text-slate-400">{statusText ?? "CSV Only. Duplicate IATA Rows Are Combined Automatically."}</div>
+      {statusText ? <div className="text-sm text-slate-500 dark:text-slate-400">{statusText}</div> : null}
       <input ref={inputRef} hidden type="file" accept=".csv,text/csv" onChange={onChange} />
     </div>
   );
