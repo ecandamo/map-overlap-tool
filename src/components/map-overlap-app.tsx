@@ -244,10 +244,10 @@ export function MapOverlapApp() {
                 <p className="section-eyebrow">API Global Solutions</p>
               </div>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[0.96] text-slate-950 dark:text-white md:text-6xl xl:text-[4.35rem]">
-                Layover overlap insights with a sharper presentation layer.
+                Layover Overlap Mapper
               </h1>
               <p className="muted-copy mt-5 max-w-2xl text-base md:text-lg">
-                Upload API and {clientDisplayName} CSVs, validate them, resolve airports from the built-in reference database, and explore overlap by region in a UI that is ready for future logos, client themes, and polished demos.
+                Compare API and client airport data from CSV files, plot locations on a map, and view overlap % plus potential overlap % from API’s worldwide coverage.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
