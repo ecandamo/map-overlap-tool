@@ -1,7 +1,7 @@
 "use client";
 
 import { scaleSqrt } from "d3-scale";
-import { MouseEvent, useMemo, useState } from "react";
+import { MouseEvent, useMemo, useRef, useState } from "react";
 import { geoEqualEarth } from "d3-geo";
 import { Geographies, Geography, Marker, ComposableMap, Sphere, Graticule } from "react-simple-maps";
 import world from "world-atlas/countries-110m.json";
@@ -30,6 +30,7 @@ type TooltipState = {
 
 export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colors }: OverlapMapProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const maxVolume = Math.max(...points.map((point) => point.totalVolume), 1);
   const radiusScale = useMemo(() => scaleSqrt().domain([0, maxVolume]).range([4, 24]), [maxVolume]);
@@ -85,16 +86,32 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
     return "Overlap";
   }
 
+  function updateTooltip(event: MouseEvent<SVGGElement>, point: MapPoint) {
+    const container = containerRef.current;
+    const bounds = container?.getBoundingClientRect();
+
+    setTooltip({
+      x: bounds ? event.clientX - bounds.left : event.clientX,
+      y: bounds ? event.clientY - bounds.top : event.clientY,
+      point
+    });
+  }
+
   return (
-    <div className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.16),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(249,115,22,0.18),_transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.96),rgba(241,245,249,0.82))] p-4 dark:border-white/10 dark:bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.16),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(251,146,60,0.16),_transparent_28%),linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.86))]">
+    <div
+      ref={containerRef}
+      className="panel-strong relative rounded-[2.2rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(241,245,249,0.84))] p-4 dark:bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.88))]"
+    >
+      <div className="panel-wash pointer-events-none absolute inset-0 rounded-[2.2rem]" aria-hidden="true" />
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-slate-950 dark:text-white">Global Overlap Map</h3>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{`Shared Bubble Scale Across API-Only, ${clientOnlyLabel}, and Overlap Airports.`}</p>
+          <p className="section-eyebrow">Visualization</p>
+          <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">Global overlap map</h3>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{`Shared bubble scale across API-Only, ${clientOnlyLabel}, and overlap airports.`}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {legendItems.map((item) => (
-            <div key={item.label} className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-2 text-xs font-medium text-slate-700 backdrop-blur dark:bg-slate-950/50 dark:text-slate-200">
+            <div key={item.label} className="subtle-chip inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-200">
               <span className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
               {item.label}
             </div>
@@ -140,20 +157,8 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
             <Marker
               key={point.iata}
               coordinates={[point.longitude, point.latitude]}
-              onMouseEnter={(event: MouseEvent<SVGGElement>) =>
-                setTooltip({
-                  x: event.clientX,
-                  y: event.clientY,
-                  point
-                })
-              }
-              onMouseMove={(event: MouseEvent<SVGGElement>) =>
-                setTooltip({
-                  x: event.clientX,
-                  y: event.clientY,
-                  point
-                })
-              }
+              onMouseEnter={(event: MouseEvent<SVGGElement>) => updateTooltip(event, point)}
+              onMouseMove={(event: MouseEvent<SVGGElement>) => updateTooltip(event, point)}
               onMouseLeave={() => setTooltip(null)}
             >
               <circle r={radiusScale(point.totalVolume)} fill={fill} fillOpacity={0.72} stroke="white" strokeWidth={1.5} />
@@ -164,8 +169,8 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
       )}
       {tooltip ? (
         <div
-          className="pointer-events-none fixed z-50 min-w-52 rounded-2xl border border-black/10 bg-white/95 p-3 text-sm shadow-2xl backdrop-blur dark:border-white/10 dark:bg-slate-950/95"
-          style={{ left: tooltip.x + 12, top: tooltip.y + 12 }}
+          className="pointer-events-none absolute z-50 min-w-52 rounded-2xl border border-black/10 bg-white/95 p-3 text-sm shadow-2xl backdrop-blur dark:border-white/10 dark:bg-slate-950/95"
+          style={{ left: tooltip.x + 16, top: tooltip.y + 16 }}
         >
           <div className="font-semibold text-slate-950 dark:text-white">{tooltip.point.iata}</div>
           <div className="text-slate-500 dark:text-slate-400">{getCategoryLabel(tooltip.point.category)}</div>

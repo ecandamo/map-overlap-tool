@@ -10,15 +10,50 @@
   color-scheme: light;
   --font-ui: var(--font-plus-jakarta-sans), system-ui, sans-serif;
   --font-mono-stack: var(--font-ibm-plex-mono), SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+  --page-bg: linear-gradient(145deg, #f5f7fb 0%, #e2edf6 42%, #fff4e8 100%);
+  --page-grid: rgba(15, 23, 42, 0.05);
+  --panel: rgba(255, 255, 255, 0.76);
+  --panel-strong: rgba(255, 255, 255, 0.9);
+  --panel-soft: rgba(255, 255, 255, 0.62);
+  --panel-border: rgba(15, 23, 42, 0.09);
+  --panel-shadow: 0 24px 60px rgba(15, 23, 42, 0.1);
+  --text-muted: #5f6f82;
+  --brand-ink: #0f172a;
+  --brand-accent: #0f766e;
+  --brand-accent-soft: rgba(15, 118, 110, 0.12);
+  --brand-highlight: #f97316;
+  --brand-highlight-soft: rgba(249, 115, 22, 0.14);
 }
 
 .dark {
   color-scheme: dark;
+  --page-bg: linear-gradient(145deg, #020617 0%, #0f172a 45%, #1e293b 100%);
+  --page-grid: rgba(148, 163, 184, 0.08);
+  --panel: rgba(15, 23, 42, 0.72);
+  --panel-strong: rgba(15, 23, 42, 0.88);
+  --panel-soft: rgba(255, 255, 255, 0.06);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --panel-shadow: none;
+  --text-muted: #94a3b8;
+  --brand-ink: #f8fafc;
+  --brand-accent: #5eead4;
+  --brand-accent-soft: rgba(94, 234, 212, 0.14);
+  --brand-highlight: #fdba74;
+  --brand-highlight-soft: rgba(251, 146, 60, 0.16);
 }
 
 body {
   font-family: var(--font-ui);
   min-height: 100vh;
+  background:
+    linear-gradient(to right, transparent 0, transparent calc(100% - 1px), var(--page-grid) calc(100% - 1px)),
+    linear-gradient(to bottom, transparent 0, transparent calc(100% - 1px), var(--page-grid) calc(100% - 1px)),
+    var(--page-bg);
+  background-size:
+    100px 100px,
+    100px 100px,
+    cover;
+  color: var(--brand-ink);
 }
 
 button,
@@ -31,4 +66,110 @@ textarea {
 
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background: var(--brand-accent-soft);
+}
+
+@layer components {
+  .app-shell {
+    position: relative;
+  }
+
+  .app-shell::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at top left, var(--brand-accent-soft), transparent 26%),
+      radial-gradient(circle at right 18% top 18%, var(--brand-highlight-soft), transparent 24%);
+    opacity: 0.65;
+  }
+
+  .panel {
+    border: 1px solid var(--panel-border);
+    background: var(--panel);
+    box-shadow: var(--panel-shadow);
+    backdrop-filter: blur(14px);
+  }
+
+  .panel-strong {
+    border: 1px solid var(--panel-border);
+    background: var(--panel-strong);
+    box-shadow: var(--panel-shadow);
+    backdrop-filter: blur(16px);
+  }
+
+  .panel-soft {
+    border: 1px solid var(--panel-border);
+    background: var(--panel-soft);
+    backdrop-filter: blur(12px);
+  }
+
+  .hero-shell {
+    position: relative;
+  }
+
+  .hero-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--brand-accent-soft) 95%, transparent), transparent 30%),
+      radial-gradient(circle at right, color-mix(in srgb, var(--brand-highlight-soft) 90%, transparent), transparent 24%);
+    opacity: 0.7;
+  }
+
+  .panel-wash {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel-wash::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--brand-accent-soft) 90%, transparent), transparent 24%),
+      radial-gradient(circle at bottom left, color-mix(in srgb, var(--brand-highlight-soft) 90%, transparent), transparent 28%);
+    opacity: 0.55;
+  }
+
+  .section-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--brand-accent);
+  }
+
+  .muted-copy {
+    color: var(--text-muted);
+  }
+
+  .field-shell {
+    border: 1px solid var(--panel-border);
+    background: rgba(255, 255, 255, 0.72);
+    transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+  }
+
+  .dark .field-shell {
+    background: rgba(2, 6, 23, 0.7);
+  }
+
+  .field-shell:focus-visible,
+  .field-shell:focus-within {
+    outline: none;
+    border-color: color-mix(in srgb, var(--brand-accent) 36%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-accent) 14%, transparent);
+  }
+
+  .subtle-chip {
+    border: 1px solid var(--panel-border);
+    background: color-mix(in srgb, var(--panel-strong) 84%, transparent);
+  }
 }

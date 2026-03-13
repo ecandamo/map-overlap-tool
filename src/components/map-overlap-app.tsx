@@ -25,7 +25,7 @@ const OverlapMap = dynamic(
   () => import("@/components/overlap-map").then((module) => module.OverlapMap),
   {
     loading: () => (
-      <section className="rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
+      <section className="panel rounded-[2rem] p-5">
         <div className="flex min-h-[28rem] items-center justify-center rounded-[1.5rem] border border-dashed border-black/10 bg-white/40 text-center dark:border-white/10 dark:bg-white/5">
           <div className="max-w-md px-6">
             <h4 className="text-xl font-semibold text-slate-950 dark:text-white">Loading Map</h4>
@@ -232,37 +232,46 @@ export function MapOverlapApp() {
   }
 
   return (
-    <main className="min-h-screen bg-[linear-gradient(135deg,#f8fafc_0%,#e2e8f0_45%,#fff7ed_100%)] px-4 py-8 text-slate-900 transition dark:bg-[linear-gradient(135deg,#020617_0%,#0f172a_45%,#1e293b_100%)] dark:text-slate-100 md:px-8">
+    <main className="app-shell min-h-screen px-4 py-6 text-slate-900 transition dark:text-slate-100 md:px-8 md:py-8">
       <div className="mx-auto max-w-7xl space-y-8">
-        <section className="relative overflow-hidden rounded-[2.5rem] border border-black/10 bg-white/75 p-8 shadow-xl shadow-slate-300/30 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:shadow-none">
-          <div className="absolute right-6 top-6 z-10">
+        <section className="panel-strong hero-shell relative overflow-hidden rounded-[2.75rem] p-6 md:p-8">
+          <div className="absolute right-5 top-5 z-10 md:right-6 md:top-6">
             <ThemeToggle />
           </div>
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-sky-700 dark:text-sky-300">API GLOBAL SOLUTIONS</p>
-              <h1 className="mt-3 pr-24 text-4xl font-semibold leading-tight text-slate-950 dark:text-white md:text-6xl">
-                Layover Destinations Overlap Map
+          <div className="relative">
+            <div className="max-w-4xl">
+              <div className="flex flex-wrap items-center gap-3 pr-20 md:pr-24">
+                <p className="section-eyebrow">API Global Solutions</p>
+              </div>
+              <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[0.96] text-slate-950 dark:text-white md:text-6xl xl:text-[4.35rem]">
+                Layover overlap insights with a sharper presentation layer.
               </h1>
-              <p className="mt-4 text-base text-slate-600 dark:text-slate-300 md:text-lg">
-                Upload API and {clientDisplayName} CSVs, validate them, resolve airports from the built-in reference database, and explore overlap by region.
+              <p className="muted-copy mt-5 max-w-2xl text-base md:text-lg">
+                Upload API and {clientDisplayName} CSVs, validate them, resolve airports from the built-in reference database, and explore overlap by region in a UI that is ready for future logos, client themes, and polished demos.
               </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <a href="/admin" className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/10">
-                Admin Login
-              </a>
-              <button onClick={handleLoadDemo} className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-slate-950">
-                Load Demo Data
-              </button>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a
+                  href="/admin"
+                  className="rounded-full border border-black/10 bg-white/70 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
+                >
+                  Admin Login
+                </a>
+                <button
+                  onClick={handleLoadDemo}
+                  disabled={loading}
+                  className="rounded-full bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
+                >
+                  {loading ? "Loading..." : "Load Demo Data"}
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
         {!apiResult || !clientResult ? (
-          <section className="rounded-[2rem] border border-dashed border-black/10 bg-white/60 p-10 text-center dark:border-white/10 dark:bg-white/5">
-            <h2 className="text-2xl font-semibold text-slate-950 dark:text-white">Start with Two CSVs or Load the Demo</h2>
-            <p className="mt-3 text-slate-600 dark:text-slate-300">
+          <section className="panel-soft rounded-[2.2rem] border-dashed p-10 text-center">
+            <h2 className="text-2xl font-semibold text-slate-950 dark:text-white">Start with two CSVs or load the demo</h2>
+            <p className="muted-copy mt-3">
               {`The app will validate uploads, combine duplicates, flag unknown IATA codes, and render API-only, ${clientOnlyLabel.toLowerCase()}, and overlap destinations together.`}
             </p>
           </section>
@@ -273,6 +282,8 @@ export function MapOverlapApp() {
             label="API Hotel Contracts"
             description="Expected columns: IATA, city, country, region, volume. Duplicate airport rows are summed during normalization."
             onFileSelect={(file) => void handleFile(file, "api")}
+            disabled={loading || !airportsLoaded}
+            statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
             validation={apiValidation}
             templateLabel="API Upload Template"
             onTemplateDownload={() =>
@@ -283,6 +294,8 @@ export function MapOverlapApp() {
             label={`${clientDisplayName} Layovers`}
             description={`Upload the ${clientDisplayName} layover destination file. Unknown IATA codes stay visible in validation but are excluded from the map.`}
             onFileSelect={(file) => void handleFile(file, "client")}
+            disabled={loading || !airportsLoaded}
+            statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
             validation={clientValidation}
             templateLabel={`${clientDisplayName} Upload Template`}
             onTemplateDownload={() =>
@@ -292,11 +305,12 @@ export function MapOverlapApp() {
         </section>
 
         <section>
-          <div className="rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
+          <div className="panel rounded-[2.2rem] p-5 md:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-semibold text-slate-950 dark:text-white">Controls</h3>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                <p className="section-eyebrow">Workspace Controls</p>
+                <h3 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-white">Tune the view without touching the data</h3>
+                <p className="muted-copy mt-2 text-sm">
                   Adjust the active client label, focus the map by region, and fine-tune how each category appears.
                 </p>
               </div>
@@ -312,55 +326,55 @@ export function MapOverlapApp() {
               </button>
             </div>
             {controlsExpanded ? (
-              <div id="controls-panel" className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.9fr)]">
-                <div className="rounded-[1.75rem] border border-black/10 bg-white/70 p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
+              <div id="controls-panel" className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.9fr)]">
+                <div className="panel-soft rounded-[1.9rem] p-4 md:p-5">
                   <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Data View</p>
-                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Set the client label, define the volume units used in the comparison, and narrow the map to a specific region.</p>
+                    <p className="section-eyebrow">Data View</p>
+                    <p className="muted-copy mt-2 text-sm">Set the client label, define the volume units used in the comparison, and narrow the map to a specific region.</p>
                   </div>
                   <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     <label className="block">
-                      <span className="mb-2 block text-sm font-medium">Client Name</span>
+                      <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Client Name</span>
                       <input
                         value={clientName}
                         onChange={(event) => setClientName(event.target.value)}
                         placeholder="Enter Client Name"
-                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-slate-950"
+                        className="field-shell w-full rounded-2xl px-4 py-3 text-slate-900 dark:text-slate-100"
                       />
-                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">Used in section titles, map labels, and summary cards.</p>
+                      <p className="muted-copy mt-2 text-xs">Used in section titles, map labels, and summary cards.</p>
                     </label>
                     <label className="block">
-                      <span className="mb-2 block text-sm font-medium">Volume Units</span>
+                      <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Volume Units</span>
                       <input
                         value={volumeUnits}
                         onChange={(event) => setVolumeUnits(event.target.value)}
                         placeholder="Rooms, contracts, nights..."
-                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-slate-950"
+                        className="field-shell w-full rounded-2xl px-4 py-3 text-slate-900 dark:text-slate-100"
                       />
-                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">Defines what the uploaded volume values represent across the comparison.</p>
+                      <p className="muted-copy mt-2 text-xs">Defines what the uploaded volume values represent across the comparison.</p>
                     </label>
                     <label className="block">
-                      <span className="mb-2 block text-sm font-medium">Region Filter</span>
+                      <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Region Filter</span>
                       <select
                         value={region}
                         onChange={(event) => setRegion(event.target.value)}
-                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-slate-950"
+                        className="field-shell w-full rounded-2xl px-4 py-3 text-slate-900 dark:text-slate-100"
                       >
                         <option>{REGION_ALL}</option>
                         {regions.map((regionValue) => (
                           <option key={regionValue}>{regionValue}</option>
                         ))}
                       </select>
-                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                      <p className="muted-copy mt-2 text-xs">
                         Showing {formatNumber(filteredPoints.length)} mapped destinations in {region === REGION_ALL ? "all regions" : region}.
                       </p>
                     </label>
                   </div>
                 </div>
-                <div className="rounded-[1.75rem] border border-black/10 bg-white/70 p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Appearance</p>
+                <div className="panel-soft rounded-[1.9rem] p-4 md:p-5">
+                  <p className="section-eyebrow">Appearance</p>
                   <div className="mt-1 flex items-center justify-between gap-4">
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Choose the marker colors used for each destination category.</p>
+                    <p className="muted-copy text-sm">Choose the marker colors used for each destination category.</p>
                     <span className="text-xs font-medium uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">Map Colors</span>
                   </div>
                   <div className="mt-4 space-y-3">
@@ -431,19 +445,19 @@ export function MapOverlapApp() {
             clientLabel={clientDisplayName}
             volumeUnitsLabel={volumeUnitsLabel}
             variant="feature"
-            maxBodyHeightClassName="max-h-[32rem] overflow-y-auto"
+            bodyHeight="large"
           />
         </section>
 
         <section className="grid gap-6 xl:grid-cols-2">
-          <DataTable title="API-Only Destinations" rows={categorizedRows.apiOnly} volumeColumns="api" volumeUnitsLabel={volumeUnitsLabel} maxBodyHeightClassName="max-h-[26rem] overflow-y-auto" />
+          <DataTable title="API-Only Destinations" rows={categorizedRows.apiOnly} volumeColumns="api" volumeUnitsLabel={volumeUnitsLabel} bodyHeight="medium" />
           <DataTable
             title={`${clientOnlyLabel} Destinations`}
             rows={categorizedRows.clientOnly}
             volumeColumns="client"
             clientLabel={clientDisplayName}
             volumeUnitsLabel={volumeUnitsLabel}
-            maxBodyHeightClassName="max-h-[26rem] overflow-y-auto"
+            bodyHeight="medium"
           />
         </section>
       </div>

@@ -10,7 +10,7 @@ type DataTableProps = {
   clientLabel?: string;
   volumeUnitsLabel?: string;
   variant?: "default" | "feature";
-  maxBodyHeightClassName?: string;
+  bodyHeight?: "default" | "medium" | "large";
 };
 
 export function DataTable({
@@ -20,7 +20,7 @@ export function DataTable({
   clientLabel = "Client",
   volumeUnitsLabel = "Volume",
   variant = "default",
-  maxBodyHeightClassName
+  bodyHeight = "default"
 }: DataTableProps) {
   const sortedRows = useMemo(
     () => [...rows].sort((a, b) => b.totalVolume - a.totalVolume || a.iata.localeCompare(b.iata)),
@@ -29,47 +29,52 @@ export function DataTable({
   const showApiVolume = volumeColumns === "api" || volumeColumns === "both";
   const showClientVolume = volumeColumns === "client" || volumeColumns === "both";
   const columnCount = 4 + (showApiVolume ? 1 : 0) + (showClientVolume ? 1 : 0);
+  const bodyHeightClassName =
+    bodyHeight === "large" ? "max-h-[32rem]" : bodyHeight === "medium" ? "max-h-[26rem]" : "";
 
   return (
     <section
       className={
         variant === "feature"
-          ? "rounded-[2rem] border border-black/10 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/5"
-          : "rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5"
+          ? "panel-strong rounded-[2rem] p-5"
+          : "panel rounded-[2rem] p-5"
       }
     >
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
+        <div>
+          <p className="section-eyebrow">Data Grid</p>
+          <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
+        </div>
         <span className="text-sm text-slate-500 dark:text-slate-400">{rows.length} Airports</span>
       </div>
-      <div className={`overflow-x-auto ${maxBodyHeightClassName ?? ""}`}>
+      <div className={`overflow-x-auto rounded-[1.5rem] border border-black/5 bg-white/55 dark:border-white/10 dark:bg-white/5 ${bodyHeightClassName} ${bodyHeight !== "default" ? "overflow-y-auto" : ""}`}>
         <table className="min-w-full text-sm">
-          <thead className="sticky top-0 text-left text-slate-500 dark:text-slate-400">
+          <thead className="sticky top-0 bg-white/90 text-left text-slate-500 backdrop-blur dark:bg-slate-950/90 dark:text-slate-400">
             <tr>
-              <th className="pb-3 pr-4">IATA</th>
-              <th className="pb-3 pr-4">City</th>
-              <th className="pb-3 pr-4">Country</th>
-              <th className="pb-3 pr-4">Region</th>
-              {showApiVolume ? <th className="pb-3 pr-4">API {volumeUnitsLabel}</th> : null}
-              {showClientVolume ? <th className="pb-3">{clientLabel} {volumeUnitsLabel}</th> : null}
+              <th className="px-4 py-3">IATA</th>
+              <th className="px-4 py-3">City</th>
+              <th className="px-4 py-3">Country</th>
+              <th className="px-4 py-3">Region</th>
+              {showApiVolume ? <th className="px-4 py-3">API {volumeUnitsLabel}</th> : null}
+              {showClientVolume ? <th className="px-4 py-3">{clientLabel} {volumeUnitsLabel}</th> : null}
             </tr>
           </thead>
           <tbody>
             {sortedRows.length === 0 ? (
               <tr>
-                <td colSpan={columnCount} className="py-5 text-slate-500 dark:text-slate-400">
+                <td colSpan={columnCount} className="px-4 py-5 text-slate-500 dark:text-slate-400">
                   No Destinations in This Segment for the Current Region Filter.
                 </td>
               </tr>
             ) : null}
             {sortedRows.map((row) => (
-              <tr key={row.iata} className="border-t border-black/5 dark:border-white/10">
-                <td className="py-3 pr-4 font-semibold text-slate-900 dark:text-slate-100">{row.iata}</td>
-                <td className="py-3 pr-4">{row.city}</td>
-                <td className="py-3 pr-4">{row.country}</td>
-                <td className="py-3 pr-4">{row.region}</td>
-                {showApiVolume ? <td className="py-3 pr-4">{formatNumber(row.apiVolume)}</td> : null}
-                {showClientVolume ? <td className="py-3">{formatNumber(row.clientVolume)}</td> : null}
+              <tr key={row.iata} className="border-t border-black/5 transition hover:bg-slate-50/70 dark:border-white/10 dark:hover:bg-white/5">
+                <td className="px-4 py-3 font-semibold text-slate-900 dark:text-slate-100">{row.iata}</td>
+                <td className="px-4 py-3">{row.city}</td>
+                <td className="px-4 py-3">{row.country}</td>
+                <td className="px-4 py-3">{row.region}</td>
+                {showApiVolume ? <td className="px-4 py-3">{formatNumber(row.apiVolume)}</td> : null}
+                {showClientVolume ? <td className="px-4 py-3">{formatNumber(row.clientVolume)}</td> : null}
               </tr>
             ))}
           </tbody>

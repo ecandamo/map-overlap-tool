@@ -45,8 +45,8 @@ export function ThemeToggle() {
       aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 transition-colors duration-200",
-        "bg-transparent text-slate-900 hover:bg-transparent dark:text-slate-100 dark:hover:bg-transparent"
+        "inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/75 px-2.5 py-1.5 shadow-sm backdrop-blur transition-colors duration-200 dark:border-white/10 dark:bg-slate-950/65",
+        "text-slate-900 hover:bg-white dark:text-slate-100 dark:hover:bg-slate-950"
       )}
     >
       <span className="flex items-center gap-1.5">
