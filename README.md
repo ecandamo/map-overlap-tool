@@ -10,7 +10,7 @@ Local-first MVP for comparing API hotel contract destinations against prospect c
 - CSV parsing: `papaparse`
 - Validation: `zod`
 - State management: `zustand`
-- Backend approach: local file-backed repository by default, Neon/Postgres-ready schema for later deployment
+- Backend approach: local file-backed repository by default, Neon/Postgres-ready schema for deployment
 
 ## Architecture
 
@@ -21,7 +21,8 @@ Local-first MVP for comparing API hotel contract destinations against prospect c
 - `public/templates`: sample upload templates
 - `public/demo`: demo CSVs
 - `data/airports.json`: local airport override storage for admin edits
-- `db/schema.sql`: Neon/Postgres schema for future deployment
+- `db/schema.sql`: Neon/Postgres schema for production deployment
+- `scripts/seed-neon.mjs`: one-time sync script for airports and admin user
 
 ## Functional scope in this MVP
 
@@ -47,7 +48,7 @@ Local-first MVP for comparing API hotel contract destinations against prospect c
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
 
-## Database schema for later Neon/Postgres use
+## Database schema
 
 ### `airports`
 
@@ -69,7 +70,7 @@ Local-first MVP for comparing API hotel contract destinations against prospect c
 - `created_at`
 - `updated_at`
 
-The live MVP uses environment-based admin credentials for simple local setup, but the schema is included for a future persisted admin table.
+Admin login now supports a persisted `admin_users` table when `DATABASE_URL` is configured. If no DB admin user exists yet, the app still falls back to `ADMIN_EMAIL` and `ADMIN_PASSWORD` so local development stays simple.
 
 ## Local setup
 
@@ -121,4 +122,13 @@ Template file: `public/templates/airport-master-template.csv`
 
 - Current default persistence is `data/airports.json`, which is perfect for local use.
 - If `DATABASE_URL` is set, the repository switches to Neon/Postgres-backed airport CRUD.
+- For deployed environments, run `npm run db:seed-neon` once after setting `DATABASE_URL` to create tables and import the current airport/admin data into Neon.
+- Bulk airport uploads use batched Postgres upserts for better performance on larger imports.
 - The project structure is already aligned with Vercel deployment and Next.js API routes.
+
+## Suggested production setup
+
+1. Create a Neon project and copy its connection string into `DATABASE_URL`.
+2. Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `SESSION_SECRET` in your environment.
+3. Run `npm run db:seed-neon` to create tables, sync airport data, and create/update the admin user.
+4. Deploy the app with the same `DATABASE_URL` and `SESSION_SECRET`.

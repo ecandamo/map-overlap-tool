@@ -1,3 +1,5 @@
+create extension if not exists pgcrypto;
+
 create table if not exists airports (
   id uuid primary key default gen_random_uuid(),
   iata varchar(3) not null unique,

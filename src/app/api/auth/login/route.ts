@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getConfiguredAdmin, setAdminSession } from "@/lib/auth";
+import { authenticateAdmin, setAdminSession } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as { email?: string; password?: string };
-  const admin = getConfiguredAdmin();
+  const email = body.email ?? "";
+  const password = body.password ?? "";
+  const admin = await authenticateAdmin(email, password);
 
-  if (body.email !== admin.email || body.password !== admin.password) {
+  if (!admin) {
     return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
   }
 

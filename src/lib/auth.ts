@@ -2,6 +2,8 @@ import crypto from "crypto";
 
 import { cookies } from "next/headers";
 
+import { countAdminUsers, findAdminUserByEmail, verifyAdminPassword } from "@/lib/server/admin-users";
+
 const SESSION_COOKIE = "map_overlap_admin";
 
 function getSecret() {
@@ -18,9 +20,32 @@ export function createSessionValue(email: string) {
 
 export function getConfiguredAdmin() {
   return {
-    email: process.env.ADMIN_EMAIL || "admin@local.test",
+    email: (process.env.ADMIN_EMAIL || "admin@local.test").trim().toLowerCase(),
     password: process.env.ADMIN_PASSWORD || "changeme123"
   };
+}
+
+export async function authenticateAdmin(email: string, password: string) {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  if (process.env.DATABASE_URL) {
+    const adminUser = await findAdminUserByEmail(normalizedEmail);
+    if (adminUser && verifyAdminPassword(password, adminUser.password_hash)) {
+      return { email: adminUser.email };
+    }
+
+    const adminUserCount = await countAdminUsers();
+    if (adminUserCount > 0) {
+      return null;
+    }
+  }
+
+  const admin = getConfiguredAdmin();
+  if (normalizedEmail === admin.email && password === admin.password) {
+    return { email: admin.email };
+  }
+
+  return null;
 }
 
 export async function setAdminSession(email: string) {

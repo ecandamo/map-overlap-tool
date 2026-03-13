@@ -43,14 +43,15 @@ export class FileAirportRepository implements AirportRepository {
   }
 
   async upsert(airport: AirportReference) {
-    const current = await readLocalAirports();
-    const next = current.filter((entry) => entry.iata !== airport.iata);
-    next.push({
+    const normalizedAirport = {
       ...airport,
       iata: airport.iata.toUpperCase()
-    });
+    };
+    const current = await readLocalAirports();
+    const next = current.filter((entry) => entry.iata.toUpperCase() !== normalizedAirport.iata);
+    next.push(normalizedAirport);
     await writeLocalAirports(next.sort((a, b) => a.iata.localeCompare(b.iata)));
-    return airport;
+    return normalizedAirport;
   }
 
   async remove(iata: string) {
