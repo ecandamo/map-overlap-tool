@@ -67,8 +67,8 @@ export function OverlapMap({ points, region, colors }: OverlapMapProps) {
     return nextProjection;
   }, [points, region]);
   const legendItems = [
-    { label: "API-only", color: colors.apiOnly },
-    { label: "Client-only", color: colors.clientOnly },
+    { label: "API-Only", color: colors.apiOnly },
+    { label: "Client-Only", color: colors.clientOnly },
     { label: "Overlap", color: colors.overlap }
   ];
 
@@ -76,8 +76,8 @@ export function OverlapMap({ points, region, colors }: OverlapMapProps) {
     <div className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.16),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(249,115,22,0.18),_transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.96),rgba(241,245,249,0.82))] p-4 dark:border-white/10 dark:bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.16),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(251,146,60,0.16),_transparent_28%),linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.86))]">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-slate-950 dark:text-white">Global overlap map</h3>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Shared bubble scale across API-only, client-only, and overlap airports.</p>
+          <h3 className="text-lg font-semibold text-slate-950 dark:text-white">Global Overlap Map</h3>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Shared Bubble Scale Across API-Only, Client-Only, and Overlap Airports.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {legendItems.map((item) => (
@@ -91,7 +91,7 @@ export function OverlapMap({ points, region, colors }: OverlapMapProps) {
       {points.length === 0 ? (
         <div className="flex min-h-[28rem] items-center justify-center rounded-[1.5rem] border border-dashed border-black/10 bg-white/40 text-center dark:border-white/10 dark:bg-white/5">
           <div className="max-w-md px-6">
-            <h4 className="text-xl font-semibold text-slate-950 dark:text-white">No mapped destinations yet</h4>
+            <h4 className="text-xl font-semibold text-slate-950 dark:text-white">No Mapped Destinations Yet</h4>
             <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
               Upload both CSVs with at least one airport that exists in the reference database, or change the region filter back to all regions.
             </p>
@@ -159,8 +159,8 @@ export function OverlapMap({ points, region, colors }: OverlapMapProps) {
           <div className="text-slate-500 dark:text-slate-400">
             {tooltip.point.city}, {tooltip.point.country}
           </div>
-          <div className="mt-2 text-slate-700 dark:text-slate-200">API volume: {formatNumber(tooltip.point.apiVolume)}</div>
-          <div className="text-slate-700 dark:text-slate-200">Client volume: {formatNumber(tooltip.point.clientVolume)}</div>
+          <div className="mt-2 text-slate-700 dark:text-slate-200">API Volume: {formatNumber(tooltip.point.apiVolume)}</div>
+          <div className="text-slate-700 dark:text-slate-200">Client Volume: {formatNumber(tooltip.point.clientVolume)}</div>
         </div>
       ) : null}
     </div>

@@ -29,8 +29,8 @@ const OverlapMap = dynamic(
       <section className="rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
         <div className="flex min-h-[28rem] items-center justify-center rounded-[1.5rem] border border-dashed border-black/10 bg-white/40 text-center dark:border-white/10 dark:bg-white/5">
           <div className="max-w-md px-6">
-            <h4 className="text-xl font-semibold text-slate-950 dark:text-white">Loading map</h4>
-            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">Preparing the world map and marker layers.</p>
+            <h4 className="text-xl font-semibold text-slate-950 dark:text-white">Loading Map</h4>
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">Preparing the World Map and Marker Layers.</p>
           </div>
         </div>
       </section>
@@ -195,11 +195,14 @@ export function MapOverlapApp() {
   return (
     <main className="min-h-screen bg-[linear-gradient(135deg,#f8fafc_0%,#e2e8f0_45%,#fff7ed_100%)] px-4 py-8 text-slate-900 transition dark:bg-[linear-gradient(135deg,#020617_0%,#0f172a_45%,#1e293b_100%)] dark:text-slate-100 md:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
-        <section className="overflow-hidden rounded-[2.5rem] border border-black/10 bg-white/75 p-8 shadow-xl shadow-slate-300/30 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:shadow-none">
+        <section className="relative overflow-hidden rounded-[2.5rem] border border-black/10 bg-white/75 p-8 shadow-xl shadow-slate-300/30 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:shadow-none">
+          <div className="absolute right-6 top-6 z-10">
+            <ThemeToggle />
+          </div>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.3em] text-sky-700 dark:text-sky-300">API GLOBAL SOLUTIONS</p>
-              <h1 className="mt-3 text-4xl font-semibold leading-tight text-slate-950 dark:text-white md:text-6xl">
+              <h1 className="mt-3 pr-24 text-4xl font-semibold leading-tight text-slate-950 dark:text-white md:text-6xl">
                 Layover Destinations Overlap Map
               </h1>
               <p className="mt-4 text-base text-slate-600 dark:text-slate-300 md:text-lg">
@@ -207,24 +210,23 @@ export function MapOverlapApp() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <ThemeToggle />
               <a href="/admin" className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/10">
                 Admin
               </a>
               <button onClick={handleLoadDemo} className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-slate-950">
-                Load demo data
+                Load Demo Data
               </button>
               <button
                 onClick={() => downloadTextFile("api-template.csv", "IATA,city,country,region,volume\nLHR,London,United Kingdom,Europe,320\nJFK,New York,United States,North America,220\n")}
                 className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/10"
               >
-                Download API template
+                Download API Template
               </button>
               <button
                 onClick={() => downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")}
                 className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/10"
               >
-                Download client template
+                Download Client Template
               </button>
             </div>
           </div>
@@ -232,7 +234,7 @@ export function MapOverlapApp() {
 
         {!apiResult || !clientResult ? (
           <section className="rounded-[2rem] border border-dashed border-black/10 bg-white/60 p-10 text-center dark:border-white/10 dark:bg-white/5">
-            <h2 className="text-2xl font-semibold text-slate-950 dark:text-white">Start with two CSVs or load the demo</h2>
+            <h2 className="text-2xl font-semibold text-slate-950 dark:text-white">Start with Two CSVs or Load the Demo</h2>
             <p className="mt-3 text-slate-600 dark:text-slate-300">
               The app will validate uploads, combine duplicates, flag unknown IATA codes, and render API-only, client-only, and overlap destinations together.
             </p>
@@ -241,32 +243,32 @@ export function MapOverlapApp() {
 
         <section className="grid gap-6 lg:grid-cols-2">
           <FileDropzone
-            label="API hotel contracts"
+            label="API Hotel Contracts"
             description="Expected columns: IATA, city, country, region, volume. Duplicate airport rows are summed during normalization."
             onFileSelect={(file) => void handleFile(file, "api")}
-            statusText={apiResult ? `${apiResult.fileName} loaded with ${apiResult.normalizedRows.length} unique airports.` : undefined}
+            statusText={apiResult ? `${apiResult.fileName} Loaded with ${apiResult.normalizedRows.length} Unique Airports.` : undefined}
           />
           <FileDropzone
-            label="Prospect client layovers"
+            label="Prospect Client Layovers"
             description="Upload the client layover destination file. Unknown IATA codes stay visible in validation but are excluded from the map."
             onFileSelect={(file) => void handleFile(file, "client")}
-            statusText={clientResult ? `${clientResult.fileName} loaded with ${clientResult.normalizedRows.length} unique airports.` : undefined}
+            statusText={clientResult ? `${clientResult.fileName} Loaded with ${clientResult.normalizedRows.length} Unique Airports.` : undefined}
           />
         </section>
 
         <section className="grid gap-4 md:grid-cols-3">
           <div className="rounded-[1.75rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Airport reference records</p>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Airport Reference Records</p>
             <p className="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">{formatNumber(airportMap.size)}</p>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Built-in airport master rows available for IATA-to-coordinate matching.</p>
           </div>
           <div className="rounded-[1.75rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">API rows matched</p>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">API Rows Matched</p>
             <p className="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">{formatNumber(apiResult?.matchedIatas.length ?? 0)}</p>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Unique API IATA codes currently resolvable from the airport reference set.</p>
           </div>
           <div className="rounded-[1.75rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Client rows matched</p>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Client Rows Matched</p>
             <p className="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">{formatNumber(clientResult?.matchedIatas.length ?? 0)}</p>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Unique client IATA codes currently resolvable from the airport reference set.</p>
           </div>
@@ -280,7 +282,7 @@ export function MapOverlapApp() {
             </div>
             <div className="mt-4 space-y-4">
               <label className="block">
-                <span className="mb-2 block text-sm font-medium">Region filter</span>
+                <span className="mb-2 block text-sm font-medium">Region Filter</span>
                 <select
                   value={region}
                   onChange={(event) => setRegion(event.target.value)}
@@ -296,8 +298,8 @@ export function MapOverlapApp() {
                 Showing {formatNumber(filteredPoints.length)} mapped destinations in {region === REGION_ALL ? "all regions" : region}.
               </p>
               <div className="flex flex-wrap gap-3">
-                <ColorPicker label="API-only" value={colors.apiOnly} onChange={(value) => setColor("apiOnly", value)} />
-                <ColorPicker label="Client-only" value={colors.clientOnly} onChange={(value) => setColor("clientOnly", value)} />
+                <ColorPicker label="API-Only" value={colors.apiOnly} onChange={(value) => setColor("apiOnly", value)} />
+                <ColorPicker label="Client-Only" value={colors.clientOnly} onChange={(value) => setColor("clientOnly", value)} />
                 <ColorPicker label="Overlap" value={colors.overlap} onChange={(value) => setColor("overlap", value)} />
               </div>
             </div>
@@ -305,13 +307,13 @@ export function MapOverlapApp() {
         </section>
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <SummaryCard label="API destinations" value={formatNumber(summary.apiDestinations)} accent={colors.apiOnly} />
-          <SummaryCard label="Client destinations" value={formatNumber(summary.clientDestinations)} accent={colors.clientOnly} />
-          <SummaryCard label="Overlap destinations" value={formatNumber(summary.overlapDestinations)} accent={colors.overlap} />
+          <SummaryCard label="API Destinations" value={formatNumber(summary.apiDestinations)} accent={colors.apiOnly} />
+          <SummaryCard label="Client Destinations" value={formatNumber(summary.clientDestinations)} accent={colors.clientOnly} />
+          <SummaryCard label="Overlap Destinations" value={formatNumber(summary.overlapDestinations)} accent={colors.overlap} />
           <SummaryCard
             label="Overlap %"
             value={formatPercent(summary.overlapPercent)}
-            detail={summary.topOverlapAirports.length > 0 ? `Top overlaps: ${summary.topOverlapAirports.map((point) => point.iata).join(", ")}` : "Upload data to see top overlapping airports."}
+            detail={summary.topOverlapAirports.length > 0 ? `Top Overlaps: ${summary.topOverlapAirports.map((point) => point.iata).join(", ")}` : "Upload Data to See Top Overlapping Airports."}
           />
         </section>
 
@@ -320,16 +322,16 @@ export function MapOverlapApp() {
         </section>
 
         <section className="grid gap-6 xl:grid-cols-2">
-          <ValidationPanel result={apiResult} title="API validation" />
+          <ValidationPanel result={apiResult} title="API Validation" />
           <ValidationPanel result={clientResult} title="Client Validation" />
         </section>
 
         <TopOverlapList rows={summary.topOverlapAirports} />
 
-        <section className="grid gap-6 xl:grid-cols-3">
-          <DataTable title="API-only destinations" rows={categorizedRows.apiOnly} />
-          <DataTable title="Client-only destinations" rows={categorizedRows.clientOnly} />
-          <DataTable title="Overlap destinations" rows={categorizedRows.overlap} />
+        <section className="grid gap-6 xl:grid-cols-[0.95fr_0.95fr_1.3fr]">
+          <DataTable title="API-Only Destinations" rows={categorizedRows.apiOnly} volumeColumns="api" />
+          <DataTable title="Client-Only Destinations" rows={categorizedRows.clientOnly} volumeColumns="client" />
+          <DataTable title="Overlap Destinations" rows={categorizedRows.overlap} volumeColumns="both" />
         </section>
       </div>
     </main>

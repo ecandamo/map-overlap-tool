@@ -54,11 +54,11 @@ export function FileDropzone({ label, description, onFileSelect, statusText }: F
           {label}
         </span>
         <div>
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Drop CSV here or click to upload</h3>
+          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Drop CSV Here or Click to Upload</h3>
           <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">{description}</p>
         </div>
       </div>
-      <div className="text-sm text-slate-500 dark:text-slate-400">{statusText ?? "CSV only. Duplicate IATA rows are combined automatically."}</div>
+      <div className="text-sm text-slate-500 dark:text-slate-400">{statusText ?? "CSV Only. Duplicate IATA Rows Are Combined Automatically."}</div>
       <input ref={inputRef} hidden type="file" accept=".csv,text/csv" onChange={onChange} />
     </button>
   );

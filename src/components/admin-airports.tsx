@@ -145,7 +145,7 @@ export function AdminAirports() {
   if (!session.authenticated) {
     return (
       <section className="mx-auto max-w-xl rounded-[2rem] border border-black/10 bg-white/80 p-8 shadow-sm dark:border-white/10 dark:bg-white/5">
-        <h1 className="text-2xl font-semibold text-slate-950 dark:text-white">Admin login</h1>
+        <h1 className="text-2xl font-semibold text-slate-950 dark:text-white">Admin Login</h1>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">This area is only for managing airport reference data.</p>
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
           Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env.local`, then sign in here.
@@ -153,7 +153,7 @@ export function AdminAirports() {
         <form onSubmit={handleLogin} className="mt-6 space-y-4">
           <input value={email} onChange={(event) => setEmail(event.target.value)} className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-slate-950" placeholder="Email" />
           <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-slate-950" placeholder="Password" />
-          <button className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-slate-950">Sign in</button>
+          <button className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-slate-950">Sign In</button>
         </form>
         {message ? <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">{message}</p> : null}
       </section>
@@ -164,22 +164,22 @@ export function AdminAirports() {
     <div className="space-y-8">
       <section className="flex flex-col gap-4 rounded-[2rem] border border-black/10 bg-white/80 p-6 dark:border-white/10 dark:bg-white/5 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-950 dark:text-white">Airport reference admin</h1>
+          <h1 className="text-2xl font-semibold text-slate-950 dark:text-white">Airport Reference Admin</h1>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Add single airports, edit existing records, or bulk-upload a master file.</p>
         </div>
         <div className="flex gap-3">
           <a href="/templates/airport-master-template.csv" className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/10">
-            Download template
+            Download Template
           </a>
           <button onClick={handleLogout} className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/10">
-            Sign out
+            Sign Out
           </button>
         </div>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[1fr_1.4fr]">
         <form onSubmit={handleSave} className="space-y-4 rounded-[2rem] border border-black/10 bg-white/80 p-6 dark:border-white/10 dark:bg-white/5">
-          <h2 className="text-lg font-semibold text-slate-950 dark:text-white">{editing ? `Edit ${editing}` : "Add airport"}</h2>
+          <h2 className="text-lg font-semibold text-slate-950 dark:text-white">{editing ? `Edit ${editing}` : "Add Airport"}</h2>
           {(["iata", "city", "country", "region"] as const).map((field) => (
             <input
               key={field}
@@ -209,7 +209,7 @@ export function AdminAirports() {
           </div>
           <div className="flex gap-3">
             <button className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-slate-950">
-              {editing ? "Update airport" : "Add airport"}
+              {editing ? "Update Airport" : "Add Airport"}
             </button>
             {editing ? (
               <button
@@ -225,7 +225,7 @@ export function AdminAirports() {
             ) : null}
           </div>
           <label className="block rounded-[1.5rem] border border-dashed border-black/10 p-4 text-sm dark:border-white/10">
-            Bulk upload airport master CSV
+            Bulk Upload Airport Master CSV
             <input
               type="file"
               accept=".csv,text/csv"
@@ -244,13 +244,13 @@ export function AdminAirports() {
         <section className="rounded-[2rem] border border-black/10 bg-white/80 p-6 dark:border-white/10 dark:bg-white/5">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-950 dark:text-white">Airport reference records</h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{filteredAirports.length} rows visible</p>
+              <h2 className="text-lg font-semibold text-slate-950 dark:text-white">Airport Reference Records</h2>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{filteredAirports.length} Rows Visible</p>
             </div>
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search by IATA, city, country, or region"
+              placeholder="Search by IATA, City, Country, or Region"
               className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm md:max-w-sm dark:border-white/10 dark:bg-slate-950"
             />
           </div>
@@ -297,7 +297,7 @@ export function AdminAirports() {
                 {filteredAirports.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="py-6 text-slate-500 dark:text-slate-400">
-                      No airports match the current search.
+                      No Airports Match the Current Search.
                     </td>
                   </tr>
                 ) : null}
