@@ -211,22 +211,10 @@ export function MapOverlapApp() {
             </div>
             <div className="flex flex-wrap gap-3">
               <a href="/admin" className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/10">
-                Admin
+                Admin Login
               </a>
               <button onClick={handleLoadDemo} className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-slate-950">
                 Load Demo Data
-              </button>
-              <button
-                onClick={() => downloadTextFile("api-template.csv", "IATA,city,country,region,volume\nLHR,London,United Kingdom,Europe,320\nJFK,New York,United States,North America,220\n")}
-                className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/10"
-              >
-                Download API Template
-              </button>
-              <button
-                onClick={() => downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")}
-                className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/10"
-              >
-                Download Client Template
               </button>
             </div>
           </div>
@@ -247,12 +235,20 @@ export function MapOverlapApp() {
             description="Expected columns: IATA, city, country, region, volume. Duplicate airport rows are summed during normalization."
             onFileSelect={(file) => void handleFile(file, "api")}
             statusText={apiResult ? `${apiResult.fileName} Loaded with ${apiResult.normalizedRows.length} Unique Airports.` : undefined}
+            templateLabel="API Template"
+            onTemplateDownload={() =>
+              downloadTextFile("api-template.csv", "IATA,city,country,region,volume\nLHR,London,United Kingdom,Europe,320\nJFK,New York,United States,North America,220\n")
+            }
           />
           <FileDropzone
             label="Prospect Client Layovers"
             description="Upload the client layover destination file. Unknown IATA codes stay visible in validation but are excluded from the map."
             onFileSelect={(file) => void handleFile(file, "client")}
             statusText={clientResult ? `${clientResult.fileName} Loaded with ${clientResult.normalizedRows.length} Unique Airports.` : undefined}
+            templateLabel="Client Template"
+            onTemplateDownload={() =>
+              downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")
+            }
           />
         </section>
 

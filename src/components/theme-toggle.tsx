@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 function SunIcon({ active }: { active: boolean }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className={cn("h-4 w-4", active ? "text-amber-500" : "text-slate-400 dark:text-slate-500")}>
+    <svg aria-hidden="true" viewBox="0 0 24 24" className={cn("h-3.5 w-3.5", active ? "text-amber-500" : "text-slate-400/80 dark:text-slate-500")}>
       <circle cx="12" cy="12" r="4" fill="currentColor" />
       <g stroke="currentColor" strokeLinecap="round" strokeWidth="1.8">
         <path d="M12 2.75v2.5" />
@@ -23,7 +23,7 @@ function SunIcon({ active }: { active: boolean }) {
 
 function MoonIcon({ active }: { active: boolean }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className={cn("h-4 w-4", active ? "text-slate-950 dark:text-slate-50" : "text-slate-400 dark:text-slate-500")}>
+    <svg aria-hidden="true" viewBox="0 0 24 24" className={cn("h-3.5 w-3.5", active ? "text-slate-800 dark:text-slate-100" : "text-slate-400/80 dark:text-slate-500")}>
       <path
         fill="currentColor"
         d="M14.9 2.8a1 1 0 0 0-1.21 1.27 8.2 8.2 0 0 1-10.2 10.2 1 1 0 0 0-1.27 1.21A10.25 10.25 0 1 0 14.9 2.8Z"
@@ -45,23 +45,23 @@ export function ThemeToggle() {
       aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
-        "inline-flex items-center gap-3 rounded-full border px-3 py-2 transition-colors duration-200",
-        "border-black/10 bg-white/85 text-slate-900 shadow-sm hover:bg-white dark:border-white/10 dark:bg-slate-950/80 dark:text-slate-100 dark:hover:bg-slate-950"
+        "inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 transition-colors duration-200",
+        "bg-transparent text-slate-900 hover:bg-transparent dark:text-slate-100 dark:hover:bg-transparent"
       )}
     >
-      <span className="flex items-center gap-2">
+      <span className="flex items-center gap-1.5">
         <SunIcon active={!isDark} />
         <span
           aria-hidden="true"
           className={cn(
-            "relative flex h-7 w-12 items-center rounded-full p-1 transition-colors duration-200",
-            isDark ? "bg-slate-700" : "bg-slate-200"
+            "relative flex h-5.5 w-10 items-center rounded-full p-0.5 transition-colors duration-200",
+            isDark ? "bg-lime-500/85" : "bg-lime-400/70"
           )}
         >
           <span
             className={cn(
-              "h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 dark:bg-slate-50",
-              isDark ? "translate-x-5" : "translate-x-0"
+              "h-4.5 w-4.5 rounded-full bg-white/95 shadow-[0_1px_2px_rgba(15,23,42,0.12)] transition-transform duration-200 dark:bg-slate-100/95",
+              isDark ? "translate-x-4.5" : "translate-x-0"
             )}
           />
         </span>

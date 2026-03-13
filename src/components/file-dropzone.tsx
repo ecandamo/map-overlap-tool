@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import { ChangeEvent, DragEvent, KeyboardEvent, MouseEvent, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -9,9 +9,11 @@ type FileDropzoneProps = {
   description: string;
   onFileSelect: (file: File) => void;
   statusText?: string;
+  templateLabel?: string;
+  onTemplateDownload?: () => void;
 };
 
-export function FileDropzone({ label, description, onFileSelect, statusText }: FileDropzoneProps) {
+export function FileDropzone({ label, description, onFileSelect, statusText, templateLabel, onTemplateDownload }: FileDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -26,16 +28,34 @@ export function FileDropzone({ label, description, onFileSelect, statusText }: F
     handleFiles(event.target.files);
   }
 
-  function onDrop(event: DragEvent<HTMLButtonElement>) {
+  function openPicker() {
+    inputRef.current?.click();
+  }
+
+  function onDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     setDragging(false);
     handleFiles(event.dataTransfer.files);
   }
 
+  function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openPicker();
+    }
+  }
+
+  function onTemplateClick(event: MouseEvent<HTMLButtonElement>) {
+    event.stopPropagation();
+    onTemplateDownload?.();
+  }
+
   return (
-    <button
-      type="button"
-      onClick={() => inputRef.current?.click()}
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={openPicker}
+      onKeyDown={onKeyDown}
       onDragOver={(event) => {
         event.preventDefault();
         setDragging(true);
@@ -56,10 +76,23 @@ export function FileDropzone({ label, description, onFileSelect, statusText }: F
         <div>
           <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Drop CSV Here or Click to Upload</h3>
           <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">{description}</p>
+          {templateLabel && onTemplateDownload ? (
+            <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">
+              Download the {templateLabel}{" "}
+              <button
+                type="button"
+                onClick={onTemplateClick}
+                className="font-semibold text-sky-700 underline decoration-sky-300 underline-offset-4 transition hover:text-sky-800 dark:text-sky-300 dark:decoration-sky-700 dark:hover:text-sky-200"
+              >
+                here
+              </button>
+              .
+            </p>
+          ) : null}
         </div>
       </div>
       <div className="text-sm text-slate-500 dark:text-slate-400">{statusText ?? "CSV Only. Duplicate IATA Rows Are Combined Automatically."}</div>
       <input ref={inputRef} hidden type="file" accept=".csv,text/csv" onChange={onChange} />
-    </button>
+    </div>
   );
 }
