@@ -4,9 +4,10 @@ import { formatNumber } from "@/lib/utils";
 type TopOverlapListProps = {
   rows: MapPoint[];
   clientLabel?: string;
+  volumeUnitsLabel?: string;
 };
 
-export function TopOverlapList({ rows, clientLabel = "Client" }: TopOverlapListProps) {
+export function TopOverlapList({ rows, clientLabel = "Client", volumeUnitsLabel = "Volume" }: TopOverlapListProps) {
   return (
     <section className="rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
       <div className="mb-4 flex items-center justify-between">
@@ -30,11 +31,11 @@ export function TopOverlapList({ rows, clientLabel = "Client" }: TopOverlapListP
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
                 <div className="rounded-2xl bg-white/80 px-3 py-2 dark:bg-slate-950/70">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">API</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">API {volumeUnitsLabel}</p>
                   <p className="mt-1 text-sm font-semibold text-slate-950 dark:text-white">{formatNumber(row.apiVolume)}</p>
                 </div>
                 <div className="rounded-2xl bg-white/80 px-3 py-2 dark:bg-slate-950/70">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">{clientLabel}</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">{clientLabel} {volumeUnitsLabel}</p>
                   <p className="mt-1 text-sm font-semibold text-slate-950 dark:text-white">{formatNumber(row.clientVolume)}</p>
                 </div>
               </div>

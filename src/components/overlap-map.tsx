@@ -14,6 +14,7 @@ type OverlapMapProps = {
   points: MapPoint[];
   region: string;
   clientLabel: string;
+  volumeUnitsLabel: string;
   colors: {
     apiOnly: string;
     clientOnly: string;
@@ -27,7 +28,7 @@ type TooltipState = {
   point: MapPoint;
 };
 
-export function OverlapMap({ points, region, clientLabel, colors }: OverlapMapProps) {
+export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colors }: OverlapMapProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const maxVolume = Math.max(...points.map((point) => point.totalVolume), 1);
@@ -171,8 +172,8 @@ export function OverlapMap({ points, region, clientLabel, colors }: OverlapMapPr
           <div className="text-slate-500 dark:text-slate-400">
             {tooltip.point.city}, {tooltip.point.country}
           </div>
-          <div className="mt-2 text-slate-700 dark:text-slate-200">API Volume: {formatNumber(tooltip.point.apiVolume)}</div>
-          <div className="text-slate-700 dark:text-slate-200">{clientLabel} Volume: {formatNumber(tooltip.point.clientVolume)}</div>
+          <div className="mt-2 text-slate-700 dark:text-slate-200">API {volumeUnitsLabel}: {formatNumber(tooltip.point.apiVolume)}</div>
+          <div className="text-slate-700 dark:text-slate-200">{clientLabel} {volumeUnitsLabel}: {formatNumber(tooltip.point.clientVolume)}</div>
         </div>
       ) : null}
     </div>

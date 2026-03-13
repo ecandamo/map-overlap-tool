@@ -419,11 +419,11 @@ export function MapOverlapApp() {
         </section>
 
         <section>
-          <OverlapMap points={filteredPoints} region={region} clientLabel={clientDisplayName} colors={colors} />
+          <OverlapMap points={filteredPoints} region={region} clientLabel={clientDisplayName} volumeUnitsLabel={volumeUnitsLabel} colors={colors} />
         </section>
 
         <section className="grid gap-6 xl:grid-cols-[0.9fr_1.35fr]">
-          <TopOverlapList rows={summary.topOverlapAirports} clientLabel={clientDisplayName} />
+          <TopOverlapList rows={summary.topOverlapAirports} clientLabel={clientDisplayName} volumeUnitsLabel={volumeUnitsLabel} />
           <DataTable
             title="Overlap Destinations"
             rows={categorizedRows.overlap}
