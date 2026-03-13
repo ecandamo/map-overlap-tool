@@ -47,27 +47,34 @@ export function ValidationPanel({ result, title, embedded = false }: ValidationP
       <div className="mt-4 space-y-4 text-sm">
         {!result ? (
           <p className="text-slate-500 dark:text-slate-400">Upload a CSV to See Validation Details.</p>
-        ) : needsReview ? (
-          <>
-            {issueCount > 0 ? (
-              <div>
-                <p className="font-medium text-slate-900 dark:text-slate-100">Issues</p>
-                <ul className="mt-2 space-y-2 text-slate-600 dark:text-slate-300">
-                  {result.issues.map((issue, index) => (
-                    <li key={`${issue.rowNumber}-${index}`}>Row {issue.rowNumber}: {issue.message}</li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-            {unknownCount > 0 ? (
-              <div>
-                <p className="font-medium text-slate-900 dark:text-slate-100">Unknown IATA Codes</p>
-                <p className="mt-1 text-slate-500 dark:text-slate-400">{result.unknownIatas.join(", ")}</p>
-              </div>
-            ) : null}
-          </>
         ) : (
-          <p className="text-slate-500 dark:text-slate-400">No Structural Issues or Unknown IATA Codes Found.</p>
+          <>
+            <div className="rounded-2xl bg-slate-100/80 p-3 text-slate-600 dark:bg-slate-900/60 dark:text-slate-300">
+              {result.fileName} Loaded with {result.normalizedRows.length} Unique Airports.
+            </div>
+            {needsReview ? (
+              <>
+                {issueCount > 0 ? (
+                  <div>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">Issues</p>
+                    <ul className="mt-2 space-y-2 text-slate-600 dark:text-slate-300">
+                      {result.issues.map((issue, index) => (
+                        <li key={`${issue.rowNumber}-${index}`}>Row {issue.rowNumber}: {issue.message}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {unknownCount > 0 ? (
+                  <div>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">Unknown IATA Codes</p>
+                    <p className="mt-1 text-slate-500 dark:text-slate-400">{result.unknownIatas.join(", ")}</p>
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <p className="text-slate-500 dark:text-slate-400">No Structural Issues or Unknown IATA Codes Found.</p>
+            )}
+          </>
         )}
       </div>
     </details>

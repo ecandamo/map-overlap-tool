@@ -238,7 +238,6 @@ export function MapOverlapApp() {
             label="API Hotel Contracts"
             description="Expected columns: IATA, city, country, region, volume. Duplicate airport rows are summed during normalization."
             onFileSelect={(file) => void handleFile(file, "api")}
-            statusText={apiResult ? `${apiResult.fileName} Loaded with ${apiResult.normalizedRows.length} Unique Airports.` : undefined}
             templateLabel="API Template"
             onTemplateDownload={() =>
               downloadTextFile("api-template.csv", "IATA,city,country,region,volume\nLHR,London,United Kingdom,Europe,320\nJFK,New York,United States,North America,220\n")
@@ -248,7 +247,6 @@ export function MapOverlapApp() {
             label={`${clientDisplayName} Layovers`}
             description={`Upload the ${clientDisplayName} layover destination file. Unknown IATA codes stay visible in validation but are excluded from the map.`}
             onFileSelect={(file) => void handleFile(file, "client")}
-            statusText={clientResult ? `${clientResult.fileName} Loaded with ${clientResult.normalizedRows.length} Unique Airports.` : undefined}
             templateLabel={`${clientDisplayName} Template`}
             onTemplateDownload={() =>
               downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")
@@ -258,7 +256,7 @@ export function MapOverlapApp() {
 
         <section className="rounded-[2rem] border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-slate-950 dark:text-white">Validation</h3>
+            <h3 className="text-lg font-semibold text-slate-950 dark:text-white">Upload Validation</h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Review Issues and Unknown IATA Codes for Each Uploaded Source.</p>
           </div>
           <div className="grid gap-4 xl:grid-cols-2">

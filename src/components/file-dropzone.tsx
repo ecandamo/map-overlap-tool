@@ -63,7 +63,7 @@ export function FileDropzone({ label, description, onFileSelect, statusText, tem
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
       className={cn(
-        "group flex min-h-52 w-full flex-col items-start justify-between rounded-[2rem] border p-6 text-left transition",
+        "group flex min-h-52 w-full flex-col items-start justify-between rounded-[2rem] border-2 border-dashed p-6 text-left transition",
         dragging
           ? "border-sky-500 bg-sky-500/10"
           : "border-black/10 bg-white/80 hover:border-slate-400 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
