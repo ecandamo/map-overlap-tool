@@ -316,7 +316,7 @@ export function MapOverlapApp() {
         </section>
 
         <section>
-          <OverlapMap points={filteredPoints} colors={colors} />
+          <OverlapMap points={filteredPoints} region={region} colors={colors} />
         </section>
 
         <section className="grid gap-6 xl:grid-cols-2">

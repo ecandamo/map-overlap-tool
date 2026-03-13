@@ -6,11 +6,13 @@ import { geoEqualEarth } from "d3-geo";
 import { Geographies, Geography, Marker, ComposableMap, Sphere, Graticule } from "react-simple-maps";
 import world from "world-atlas/countries-110m.json";
 
+import { REGION_ALL } from "@/lib/constants";
 import { MapPoint } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";
 
 type OverlapMapProps = {
   points: MapPoint[];
+  region: string;
   colors: {
     apiOnly: string;
     clientOnly: string;
@@ -24,11 +26,46 @@ type TooltipState = {
   point: MapPoint;
 };
 
-export function OverlapMap({ points, colors }: OverlapMapProps) {
+export function OverlapMap({ points, region, colors }: OverlapMapProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const maxVolume = Math.max(...points.map((point) => point.totalVolume), 1);
   const radiusScale = useMemo(() => scaleSqrt().domain([0, maxVolume]).range([4, 24]), [maxVolume]);
+  const projection = useMemo(() => {
+    const nextProjection = geoEqualEarth();
+
+    if (points.length === 0 || !region || region === REGION_ALL) {
+      return nextProjection;
+    }
+
+    const longitudes = points.map((point) => point.longitude);
+    const latitudes = points.map((point) => point.latitude);
+    const minLongitude = Math.min(...longitudes);
+    const maxLongitude = Math.max(...longitudes);
+    const minLatitude = Math.min(...latitudes);
+    const maxLatitude = Math.max(...latitudes);
+    const longitudePadding = Math.max(12, (maxLongitude - minLongitude) * 0.35);
+    const latitudePadding = Math.max(8, (maxLatitude - minLatitude) * 0.35);
+
+    nextProjection.fitExtent(
+      [
+        [56, 36],
+        [924, 424]
+      ],
+      {
+        type: "Polygon",
+        coordinates: [[
+          [Math.max(-180, minLongitude - longitudePadding), Math.max(-85, minLatitude - latitudePadding)],
+          [Math.max(-180, minLongitude - longitudePadding), Math.min(85, maxLatitude + latitudePadding)],
+          [Math.min(180, maxLongitude + longitudePadding), Math.min(85, maxLatitude + latitudePadding)],
+          [Math.min(180, maxLongitude + longitudePadding), Math.max(-85, minLatitude - latitudePadding)],
+          [Math.max(-180, minLongitude - longitudePadding), Math.max(-85, minLatitude - latitudePadding)]
+        ]]
+      }
+    );
+
+    return nextProjection;
+  }, [points, region]);
   const legendItems = [
     { label: "API-only", color: colors.apiOnly },
     { label: "Client-only", color: colors.clientOnly },
@@ -61,7 +98,7 @@ export function OverlapMap({ points, colors }: OverlapMapProps) {
           </div>
         </div>
       ) : (
-      <ComposableMap projection={geoEqualEarth()} width={980} height={460} className="h-auto w-full">
+      <ComposableMap projection={projection} width={980} height={460} className="h-auto w-full">
         <Sphere fill="transparent" stroke="rgba(148,163,184,0.25)" strokeWidth={0.8} />
         <Graticule stroke="rgba(148,163,184,0.15)" strokeWidth={0.4} />
         <Geographies geography={world}>
