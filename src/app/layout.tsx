@@ -16,8 +16,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Map Overlap Tool",
-  description: "Local-first MVP for overlapping API hotel contract destinations and client layover destinations."
+  title: "API Layover Overlap Mapper",
+  description: "Branded overlap mapping workspace for comparing API hotel contract destinations and client layover destinations."
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

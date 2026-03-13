@@ -23,11 +23,11 @@ export function SummaryCard({ label, value, accent, detail, eyebrow, variant = "
     <div
       className={
         variant === "feature"
-          ? "relative rounded-[2rem] border border-black/10 bg-white/92 p-5 shadow-sm dark:border-white/10 dark:bg-white/5"
-          : "relative rounded-[1.85rem] border border-black/10 bg-white/80 p-5 shadow-sm dark:border-white/10 dark:bg-white/5"
+          ? "brand-surface relative rounded-[2rem] p-5 shadow-sm"
+          : "brand-surface relative rounded-[1.85rem] p-5 shadow-sm"
       }
     >
-      <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(circle_at_top_right,rgba(15,118,110,0.08),transparent_20%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(94,234,212,0.08),transparent_20%)]" />
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(circle_at_top_right,var(--brand-accent-soft),transparent_20%)] dark:bg-[radial-gradient(circle_at_top_right,var(--brand-highlight-soft),transparent_24%)]" />
       <div className="relative">
         {eyebrow ? (
           <div className={`${hideValue ? "mb-1.5" : "mb-3"} text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500`}>

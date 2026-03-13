@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 function SunIcon({ active }: { active: boolean }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className={cn("h-3.5 w-3.5", active ? "text-amber-500" : "text-slate-400/80 dark:text-slate-500")}>
+    <svg aria-hidden="true" viewBox="0 0 24 24" className={cn("h-3.5 w-3.5", active ? "text-[var(--brand-accent)]" : "text-slate-400/80 dark:text-slate-500")}>
       <circle cx="12" cy="12" r="4" fill="currentColor" />
       <g stroke="currentColor" strokeLinecap="round" strokeWidth="1.8">
         <path d="M12 2.75v2.5" />
@@ -45,8 +45,8 @@ export function ThemeToggle() {
       aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/75 px-2.5 py-1.5 shadow-sm backdrop-blur transition-colors duration-200 dark:border-white/10 dark:bg-slate-950/65",
-        "text-slate-900 hover:bg-white dark:text-slate-100 dark:hover:bg-slate-950"
+        "brand-btn-secondary inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 shadow-sm transition-colors duration-200",
+        "text-slate-900 dark:text-slate-100"
       )}
     >
       <span className="flex items-center gap-1.5">
@@ -55,7 +55,7 @@ export function ThemeToggle() {
           aria-hidden="true"
           className={cn(
             "relative flex h-5.5 w-10 items-center rounded-full p-0.5 transition-colors duration-200",
-            isDark ? "bg-lime-500/85" : "bg-lime-400/70"
+            isDark ? "bg-[var(--brand-accent)]" : "bg-[color-mix(in_srgb,var(--brand-accent)_72%,white)]"
           )}
         >
           <span

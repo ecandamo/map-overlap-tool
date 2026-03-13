@@ -95,10 +95,10 @@ export function FileDropzone({ label, description, onFileSelect, statusText, dis
       className={cn(
         "panel-wash group relative flex min-h-60 w-full flex-col items-start justify-between rounded-[2.2rem] border-2 border-dashed p-6 text-left transition",
         disabled
-          ? "cursor-not-allowed border-black/10 bg-white/60 opacity-75 dark:border-white/10 dark:bg-white/5"
+          ? "cursor-not-allowed border-[var(--panel-border)] bg-[color-mix(in_srgb,var(--panel-strong)_72%,transparent)] opacity-75"
           : dragging
-          ? "border-sky-500 bg-sky-500/10"
-          : "border-black/10 bg-white/75 hover:border-slate-400 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+          ? "border-[var(--brand-accent)] bg-[var(--brand-accent-soft)]"
+          : "border-[var(--panel-border)] bg-[color-mix(in_srgb,var(--panel-strong)_82%,transparent)] hover:border-[color-mix(in_srgb,var(--brand-accent)_40%,transparent)] hover:bg-[color-mix(in_srgb,var(--panel-strong)_95%,transparent)]"
       )}
     >
       {validation ? (
@@ -107,10 +107,10 @@ export function FileDropzone({ label, description, onFileSelect, statusText, dis
             className={cn(
               "inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]",
               validation.statusTone === "warning"
-                ? "bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-200"
+                ? "brand-status-warning"
                 : validation.statusTone === "good"
-                  ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200"
-                  : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                  ? "brand-status-good"
+                  : "brand-status-neutral"
             )}
           >
             {isGoodStatus ? (
@@ -125,7 +125,7 @@ export function FileDropzone({ label, description, onFileSelect, statusText, dis
             )}
           </span>
           {validation.details && validation.details.length > 0 ? (
-            <div className="pointer-events-none absolute right-0 top-full z-20 mt-3 hidden w-72 rounded-2xl border border-black/10 bg-white/95 p-3 text-left text-xs text-slate-600 shadow-lg shadow-slate-300/30 backdrop-blur group-hover/validation:block dark:border-white/10 dark:bg-slate-950/95 dark:text-slate-300 dark:shadow-none">
+            <div className="brand-surface pointer-events-none absolute right-0 top-full z-20 mt-3 hidden w-72 rounded-2xl p-3 text-left text-xs text-slate-600 shadow-lg shadow-slate-300/20 backdrop-blur group-hover/validation:block dark:text-slate-300 dark:shadow-none">
               <p className="font-semibold text-slate-900 dark:text-slate-100">Validation details</p>
               <ul className="mt-2 space-y-1.5">
                 {validation.details.map((detail) => (
@@ -138,7 +138,7 @@ export function FileDropzone({ label, description, onFileSelect, statusText, dis
       ) : null}
       <div className="relative z-[1] w-full">
         <div className="space-y-3">
-          <span className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-white dark:bg-white dark:text-slate-900">
+          <span className="brand-badge inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em]">
             {label}
           </span>
           <div>
@@ -148,7 +148,7 @@ export function FileDropzone({ label, description, onFileSelect, statusText, dis
         </div>
       </div>
       <div className="relative z-[1] mt-8 w-full">
-        <div className="rounded-[1.7rem] border border-black/10 bg-white/70 px-4 py-3 dark:border-white/10 dark:bg-white/5">
+        <div className="brand-surface rounded-[1.7rem] px-4 py-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Upload Format</p>
@@ -164,7 +164,7 @@ export function FileDropzone({ label, description, onFileSelect, statusText, dis
               <button
                 type="button"
                 onClick={onTemplateClick}
-                className="font-semibold text-sky-700 underline decoration-sky-300 underline-offset-4 transition hover:text-sky-800 dark:text-sky-300 dark:decoration-sky-700 dark:hover:text-sky-200"
+                className="brand-link font-semibold underline underline-offset-4 transition hover:opacity-80"
               >
                 here
               </button>

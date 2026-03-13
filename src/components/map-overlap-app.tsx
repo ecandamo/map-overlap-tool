@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ColorPicker } from "@/components/color-picker";
+import { BrandLogo } from "@/components/brand-logo";
 import { DataTable } from "@/components/data-table";
 import { FileDropzone } from "@/components/file-dropzone";
 import { SummaryCard } from "@/components/summary-card";
@@ -240,8 +241,8 @@ export function MapOverlapApp() {
           </div>
           <div className="relative">
             <div className="max-w-4xl">
-              <div className="flex flex-wrap items-center gap-3 pr-20 md:pr-24">
-                <p className="section-eyebrow">API Global Solutions</p>
+              <div className="flex flex-wrap items-center gap-4 pr-20 md:pr-24">
+                <BrandLogo className="w-[148px] md:w-[172px]" />
               </div>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[0.96] text-slate-950 dark:text-white md:text-6xl xl:text-[4.35rem]">
                 Layover Overlap Mapper
@@ -252,14 +253,14 @@ export function MapOverlapApp() {
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   href="/admin"
-                  className="rounded-full border border-black/10 bg-white/70 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
+                  className="brand-btn-secondary rounded-full px-4 py-2.5 text-sm font-medium transition"
                 >
                   Admin Login
                 </a>
                 <button
                   onClick={handleLoadDemo}
                   disabled={loading}
-                  className="rounded-full bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
+                  className="brand-btn-primary rounded-full px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading ? "Loading..." : "Load Demo Data"}
                 </button>
@@ -317,7 +318,7 @@ export function MapOverlapApp() {
               <button
                 type="button"
                 onClick={() => setControlsExpanded((current) => !current)}
-                className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/80 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
+                className="brand-btn-secondary inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition dark:text-slate-300"
                 aria-expanded={controlsExpanded}
                 aria-controls="controls-panel"
               >
@@ -408,15 +409,15 @@ export function MapOverlapApp() {
                       <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Current Overlap %</p>
                       <p className="mt-2 text-5xl font-semibold text-slate-950 dark:text-white">{formatPercent(summary.overlapPercent)}</p>
                     </div>
-                    <div className="hidden w-px bg-black/10 sm:block dark:bg-white/10" aria-hidden="true" />
+                    <div className="brand-divider hidden w-px sm:block" aria-hidden="true" />
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Potential Overlap %</p>
                         <div className="group/tooltip relative">
-                          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-slate-300 text-[10px] font-semibold text-slate-500 dark:border-slate-600 dark:text-slate-400">
+                          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[var(--panel-border)] text-[10px] font-semibold text-slate-500 dark:text-slate-400">
                             i
                           </span>
-                          <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-2xl border border-black/10 bg-white/95 p-3 text-xs normal-case tracking-normal text-slate-600 shadow-lg shadow-slate-300/30 backdrop-blur group-hover/tooltip:block dark:border-white/10 dark:bg-slate-950/95 dark:text-slate-300 dark:shadow-none">
+                          <div className="brand-surface pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-2xl p-3 text-xs normal-case tracking-normal text-slate-600 shadow-lg shadow-slate-300/20 backdrop-blur group-hover/tooltip:block dark:text-slate-300 dark:shadow-none">
                             Potential overlap estimates additional client-only destinations that API may cover based on nearby city, country or region presence.
                           </div>
                         </div>

@@ -3,9 +3,9 @@ import { ColorConfig } from "@/lib/types";
 export const REQUIRED_COLUMNS = ["IATA", "city", "country", "region", "volume"] as const;
 
 export const DEFAULT_COLORS: ColorConfig = {
-  apiOnly: "#0f766e",
-  clientOnly: "#7c3aed",
-  overlap: "#ea580c"
+  apiOnly: "#78BC43",
+  clientOnly: "#7F7F7F",
+  overlap: "#273B6E"
 };
 
 export const DEFAULT_THEME = "light";
