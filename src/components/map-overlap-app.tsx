@@ -99,9 +99,11 @@ export function MapOverlapApp() {
   const [airportMap, setAirportMap] = useState<Map<string, AirportReference>>(new Map());
   const [loading, setLoading] = useState(false);
   const [controlsExpanded, setControlsExpanded] = useState(true);
+  const [uploadsCollapsed, setUploadsCollapsed] = useState(false);
   const [hasSessionData, setHasSessionData] = useState(false);
   const [dropzoneResetKey, setDropzoneResetKey] = useState(0);
   const airportLoadAttempted = useRef(false);
+  const hadCompleteDataset = useRef(false);
   const apiSourceRef = useRef<{ text: string; fileName: string } | null>(null);
   const clientSourceRef = useRef<{ text: string; fileName: string } | null>(null);
 
@@ -146,6 +148,15 @@ export function MapOverlapApp() {
 
   const apiValidation = useMemo(() => buildValidationSummary(apiResult), [apiResult]);
   const clientValidation = useMemo(() => buildValidationSummary(clientResult), [clientResult]);
+  const hasCompleteDataset = Boolean(apiResult && clientResult);
+
+  useEffect(() => {
+    if (hasCompleteDataset && !hadCompleteDataset.current) {
+      setUploadsCollapsed(true);
+    }
+
+    hadCompleteDataset.current = hasCompleteDataset;
+  }, [hasCompleteDataset]);
 
   function buildCombinedResults(nextApi?: ParsedCsvResult, nextClient?: ParsedCsvResult) {
     const apiUnknownIatas = nextApi ? new Set(nextApi.unknownIatas) : new Set<string>();
@@ -240,8 +251,10 @@ export function MapOverlapApp() {
   function handleCleanData() {
     apiSourceRef.current = null;
     clientSourceRef.current = null;
+    hadCompleteDataset.current = false;
     setHasSessionData(false);
     setControlsExpanded(true);
+    setUploadsCollapsed(false);
     setDropzoneResetKey((current) => current + 1);
     resetAppState();
   }
@@ -308,33 +321,120 @@ export function MapOverlapApp() {
           </section>
         ) : null}
 
-        <section className="grid gap-6 lg:grid-cols-2">
-          <FileDropzone
-            label="API DESTINATIONS COVERAGE"
-            description="Expected columns: IATA, city, country, region, volume. Duplicate airport rows are summed during normalization."
-            onFileSelect={(file) => void handleFile(file, "api")}
-            disabled={loading || !airportsLoaded}
-            statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
-            validation={apiValidation}
-            templateLabel="API Upload Template"
-            resetKey={dropzoneResetKey}
-            onTemplateDownload={() =>
-              downloadTextFile("api-template.csv", "IATA,city,country,region,volume\nLHR,London,United Kingdom,Europe,320\nJFK,New York,United States,North America,220\n")
-            }
-          />
-          <FileDropzone
-            label={`${clientDisplayName} Layovers`}
-            description={`Upload the ${clientDisplayName} layover destination file. Unknown IATA codes stay visible in validation but are excluded from the map.`}
-            onFileSelect={(file) => void handleFile(file, "client")}
-            disabled={loading || !airportsLoaded}
-            statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
-            validation={clientValidation}
-            templateLabel={`${clientDisplayName} Upload Template`}
-            resetKey={dropzoneResetKey}
-            onTemplateDownload={() =>
-              downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")
-            }
-          />
+        <section className="space-y-4">
+          <div className="panel rounded-[2.2rem] p-4 md:p-5">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="section-eyebrow">Uploads</p>
+                <h3 className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">
+                  {hasCompleteDataset ? "Data loaded and ready" : "Load your comparison files"}
+                </h3>
+                <p className="muted-copy mt-2 text-sm">
+                  {hasCompleteDataset
+                    ? "Both datasets are active. Expand this section any time to replace either file."
+                    : "Upload both datasets or load the demo to begin the overlap comparison."}
+                </p>
+              </div>
+              {hasCompleteDataset ? (
+                <button
+                  type="button"
+                  onClick={() => setUploadsCollapsed((current) => !current)}
+                  className="brand-btn-secondary inline-flex items-center gap-2 self-start rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition dark:text-slate-300"
+                >
+                  <span>{uploadsCollapsed ? "Change Files" : "Collapse"}</span>
+                  <span aria-hidden="true" className={`text-xs transition ${uploadsCollapsed ? "" : "rotate-180"}`}>⌄</span>
+                </button>
+              ) : null}
+            </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <div className="brand-surface rounded-[1.5rem] px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">API dataset</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">{apiResult?.fileName ?? "Not loaded"}</p>
+                  </div>
+                  <span
+                    className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${
+                      apiValidation.statusTone === "warning"
+                        ? "brand-status-warning"
+                        : apiValidation.statusTone === "good"
+                          ? "brand-status-good"
+                          : "brand-status-neutral"
+                    }`}
+                  >
+                    {apiValidation.statusTone === "good" ? (
+                      <>
+                        <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m3.5 8.5 2.5 2.5 6-6" />
+                        </svg>
+                        <span className="sr-only">{apiValidation.statusLabel}</span>
+                      </>
+                    ) : (
+                      apiValidation.statusLabel
+                    )}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{apiValidation.summary}</p>
+              </div>
+              <div className="brand-surface rounded-[1.5rem] px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">{clientDisplayName} dataset</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">{clientResult?.fileName ?? "Not loaded"}</p>
+                  </div>
+                  <span
+                    className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${
+                      clientValidation.statusTone === "warning"
+                        ? "brand-status-warning"
+                        : clientValidation.statusTone === "good"
+                          ? "brand-status-good"
+                          : "brand-status-neutral"
+                    }`}
+                  >
+                    {clientValidation.statusTone === "good" ? (
+                      <>
+                        <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m3.5 8.5 2.5 2.5 6-6" />
+                        </svg>
+                        <span className="sr-only">{clientValidation.statusLabel}</span>
+                      </>
+                    ) : (
+                      clientValidation.statusLabel
+                    )}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{clientValidation.summary}</p>
+              </div>
+            </div>
+            {!uploadsCollapsed ? (
+              <div className="mt-5 grid gap-6 lg:grid-cols-2">
+                <FileDropzone
+                  label="API DESTINATIONS COVERAGE"
+                  description=""
+                  onFileSelect={(file) => void handleFile(file, "api")}
+                  disabled={loading || !airportsLoaded}
+                  statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
+                  templateLabel="API Upload Template"
+                  resetKey={dropzoneResetKey}
+                  onTemplateDownload={() =>
+                    downloadTextFile("api-template.csv", "IATA,city,country,region,volume\nLHR,London,United Kingdom,Europe,320\nJFK,New York,United States,North America,220\n")
+                  }
+                />
+                <FileDropzone
+                  label={`${clientDisplayName} Layovers`}
+                  description=""
+                  onFileSelect={(file) => void handleFile(file, "client")}
+                  disabled={loading || !airportsLoaded}
+                  statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
+                  templateLabel={`${clientDisplayName} Upload Template`}
+                  resetKey={dropzoneResetKey}
+                  onTemplateDownload={() =>
+                    downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")
+                  }
+                />
+              </div>
+            ) : null}
+          </div>
         </section>
 
         <section>

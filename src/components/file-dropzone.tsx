@@ -159,22 +159,22 @@ export function FileDropzone({
           <span className="brand-badge inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em]">
             {label}
           </span>
-          <div>
-            <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">Drop CSV here or click to upload</h3>
-            <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">{description}</p>
+          <div className={description ? "" : "pb-1"}>
+            <h3 className="text-2xl font-semibold leading-tight text-slate-900 dark:text-white">
+              <span>Drop CSV here or </span>
+              <span className="text-[var(--brand-accent)]">click to upload</span>
+            </h3>
+            {description ? <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">{description}</p> : null}
           </div>
         </div>
       </div>
-      <div className="relative z-[1] mt-8 w-full">
+      <div className={`relative z-[1] w-full ${description ? "mt-8" : "mt-4"}`}>
         <div className="brand-surface rounded-[1.7rem] px-4 py-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Upload Format</p>
               <p className="mt-1 text-sm text-slate-700 dark:text-slate-200">CSV file, first file only, validated against the airport reference set.</p>
             </div>
-            <span className="subtle-chip rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300">
-              {disabled ? "Working..." : "Drag and drop enabled"}
-            </span>
           </div>
           {templateLabel && onTemplateDownload ? (
             <p className="mt-3 max-w-md text-sm text-slate-600 dark:text-slate-300">
