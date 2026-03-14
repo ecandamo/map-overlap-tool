@@ -92,7 +92,6 @@ export function MapOverlapApp() {
   const [airportMap, setAirportMap] = useState<Map<string, AirportReference>>(new Map());
   const [loading, setLoading] = useState(false);
   const [controlsExpanded, setControlsExpanded] = useState(true);
-  const [potentialOverlapHelpExpanded, setPotentialOverlapHelpExpanded] = useState(false);
   const [uploadsCollapsed, setUploadsCollapsed] = useState(false);
   const [hasSessionData, setHasSessionData] = useState(false);
   const [dropzoneResetKey, setDropzoneResetKey] = useState(0);
@@ -499,21 +498,15 @@ export function MapOverlapApp() {
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Potential Overlap %</p>
-                        <button
-                          type="button"
-                          onClick={() => setPotentialOverlapHelpExpanded((current) => !current)}
-                          aria-expanded={potentialOverlapHelpExpanded}
-                          aria-controls="potential-overlap-help"
-                          className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[var(--panel-border)] text-[10px] font-semibold text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-                        >
-                          i
-                        </button>
-                      </div>
-                      <CollapsiblePanel expanded={potentialOverlapHelpExpanded} id="potential-overlap-help" className="mt-2">
-                        <div className="brand-surface rounded-2xl p-3 text-xs text-slate-600 dark:text-slate-300">
-                          Potential overlap estimates additional client-only destinations that API may cover based on nearby city, country or region presence.
+                        <div className="group/tooltip relative">
+                          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[var(--panel-border)] text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                            i
+                          </span>
+                          <div className="brand-surface pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-2xl p-3 text-xs normal-case tracking-normal text-slate-600 shadow-lg shadow-slate-300/20 backdrop-blur group-hover/tooltip:block dark:text-slate-300 dark:shadow-none">
+                            Potential overlap estimates additional client-only destinations that API may cover based on nearby city, country or region presence.
+                          </div>
                         </div>
-                      </CollapsiblePanel>
+                      </div>
                       <p className="mt-2 text-5xl font-semibold text-slate-950 dark:text-white">{formatPercent(summary.potentialOverlapPercent)}</p>
                     </div>
                   </div>
