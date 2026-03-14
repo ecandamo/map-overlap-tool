@@ -144,7 +144,7 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
       <div className="mb-4 flex items-center justify-between">
         <div>
           <p className="section-eyebrow">Visualization</p>
-          <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">Global overlap map</h3>
+          <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">Global Overlap Map</h3>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{`Shared bubble scale across API-Only, ${clientOnlyLabel}, and overlap airports.`}</p>
         </div>
         <div className="flex flex-wrap gap-2">
