@@ -55,6 +55,7 @@ export const useAppStore = create<AppState>((set) => ({
       region: "All regions",
       clientName: "",
       volumeUnits: "",
+      colors: DEFAULT_COLORS,
       apiResult: undefined,
       clientResult: undefined,
       points: []

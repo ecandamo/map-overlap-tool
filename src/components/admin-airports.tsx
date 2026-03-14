@@ -193,22 +193,28 @@ export function AdminAirports() {
             />
           ))}
           <div className="grid gap-4 md:grid-cols-2">
-            <input
-              type="number"
-              step="0.0001"
-              value={form.latitude}
-              onChange={(event) => setForm((current) => ({ ...current, latitude: Number(event.target.value) }))}
-              className="brand-input w-full rounded-2xl px-4 py-3"
-              placeholder="Latitude"
-            />
-            <input
-              type="number"
-              step="0.0001"
-              value={form.longitude}
-              onChange={(event) => setForm((current) => ({ ...current, longitude: Number(event.target.value) }))}
-              className="brand-input w-full rounded-2xl px-4 py-3"
-              placeholder="Longitude"
-            />
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Latitude</span>
+              <input
+                type="number"
+                step="0.0001"
+                value={form.latitude}
+                onChange={(event) => setForm((current) => ({ ...current, latitude: Number(event.target.value) }))}
+                className="brand-input w-full rounded-2xl px-4 py-3"
+                placeholder="Latitude"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Longitude</span>
+              <input
+                type="number"
+                step="0.0001"
+                value={form.longitude}
+                onChange={(event) => setForm((current) => ({ ...current, longitude: Number(event.target.value) }))}
+                className="brand-input w-full rounded-2xl px-4 py-3"
+                placeholder="Longitude"
+              />
+            </label>
           </div>
           <div className="flex gap-3">
             <button className="brand-btn-primary rounded-full px-5 py-3 text-sm font-semibold">

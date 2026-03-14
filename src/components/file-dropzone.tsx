@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, DragEvent, KeyboardEvent, MouseEvent, useRef, useState } from "react";
+import { ChangeEvent, DragEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -20,11 +20,28 @@ type FileDropzoneProps = {
   validation?: ValidationTooltip;
   templateLabel?: string;
   onTemplateDownload?: () => void;
+  resetKey?: number;
 };
 
-export function FileDropzone({ label, description, onFileSelect, statusText, disabled = false, validation, templateLabel, onTemplateDownload }: FileDropzoneProps) {
+export function FileDropzone({
+  label,
+  description,
+  onFileSelect,
+  statusText,
+  disabled = false,
+  validation,
+  templateLabel,
+  onTemplateDownload,
+  resetKey = 0
+}: FileDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+  }, [resetKey]);
 
   function handleFiles(files: FileList | null) {
     if (disabled) {
@@ -38,6 +55,7 @@ export function FileDropzone({ label, description, onFileSelect, statusText, dis
 
   function onChange(event: ChangeEvent<HTMLInputElement>) {
     handleFiles(event.target.files);
+    event.target.value = "";
   }
 
   function openPicker() {

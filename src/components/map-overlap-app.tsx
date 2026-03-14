@@ -94,10 +94,13 @@ export function MapOverlapApp() {
   const points = useAppStore((state) => state.points);
   const airportsLoaded = useAppStore((state) => state.airportsLoaded);
   const setAirportsLoaded = useAppStore((state) => state.setAirportsLoaded);
+  const resetAppState = useAppStore((state) => state.reset);
 
   const [airportMap, setAirportMap] = useState<Map<string, AirportReference>>(new Map());
   const [loading, setLoading] = useState(false);
   const [controlsExpanded, setControlsExpanded] = useState(true);
+  const [hasSessionData, setHasSessionData] = useState(false);
+  const [dropzoneResetKey, setDropzoneResetKey] = useState(0);
   const airportLoadAttempted = useRef(false);
   const apiSourceRef = useRef<{ text: string; fileName: string } | null>(null);
   const clientSourceRef = useRef<{ text: string; fileName: string } | null>(null);
@@ -215,6 +218,7 @@ export function MapOverlapApp() {
     } else {
       clientSourceRef.current = { text, fileName: file.name };
     }
+    setHasSessionData(true);
     syncResults(source === "api" ? { api: result } : { client: result });
     setLoading(false);
   }
@@ -228,8 +232,18 @@ export function MapOverlapApp() {
       parseCsv({ source: "api", text: apiCsv, fileName: "api-demo.csv", airportMap }),
       parseCsv({ source: "client", text: clientCsv, fileName: "client-demo.csv", airportMap })
     ]);
+    setHasSessionData(true);
     setResults(buildCombinedResults(nextApi, nextClient));
     setLoading(false);
+  }
+
+  function handleCleanData() {
+    apiSourceRef.current = null;
+    clientSourceRef.current = null;
+    setHasSessionData(false);
+    setControlsExpanded(true);
+    setDropzoneResetKey((current) => current + 1);
+    resetAppState();
   }
 
   return (
@@ -264,6 +278,16 @@ export function MapOverlapApp() {
                 >
                   {loading ? "Loading..." : "Load Demo Data"}
                 </button>
+                {hasSessionData ? (
+                  <button
+                    type="button"
+                    onClick={handleCleanData}
+                    disabled={loading}
+                    className="brand-btn-secondary rounded-full px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    Clean Data
+                  </button>
+                ) : null}
               </div>
             </div>
           </div>
@@ -287,6 +311,7 @@ export function MapOverlapApp() {
             statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
             validation={apiValidation}
             templateLabel="API Upload Template"
+            resetKey={dropzoneResetKey}
             onTemplateDownload={() =>
               downloadTextFile("api-template.csv", "IATA,city,country,region,volume\nLHR,London,United Kingdom,Europe,320\nJFK,New York,United States,North America,220\n")
             }
@@ -299,6 +324,7 @@ export function MapOverlapApp() {
             statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
             validation={clientValidation}
             templateLabel={`${clientDisplayName} Upload Template`}
+            resetKey={dropzoneResetKey}
             onTemplateDownload={() =>
               downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")
             }
@@ -309,8 +335,8 @@ export function MapOverlapApp() {
           <div className="panel rounded-[2.2rem] p-5 md:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="section-eyebrow">Workspace Controls</p>
-                <h3 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-white">Tune the view without touching the data</h3>
+                <p className="section-eyebrow">Controls</p>
+                <h3 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-white">Tune the view</h3>
                 <p className="muted-copy mt-2 text-sm">
                   Adjust the active client label, focus the map by region, and fine-tune how each category appears.
                 </p>

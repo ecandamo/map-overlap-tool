@@ -13,7 +13,7 @@ export function TopOverlapList({ rows, clientLabel = "Client", volumeUnitsLabel 
       <div className="mb-4 flex items-center justify-between">
         <div>
           <p className="section-eyebrow">Leaderboard</p>
-          <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">Top 3 overlap airports</h3>
+          <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">Top 3 Overlap Airports</h3>
         </div>
         <span className="text-sm text-slate-500 dark:text-slate-400">{rows.length} Ranked</span>
       </div>
