@@ -4,20 +4,11 @@ import { ChangeEvent, DragEvent, KeyboardEvent, MouseEvent, useEffect, useRef, u
 
 import { cn } from "@/lib/utils";
 
-type ValidationTooltip = {
-  statusLabel: string;
-  statusTone: "neutral" | "good" | "warning";
-  summary: string;
-  details?: string[];
-};
-
 type FileDropzoneProps = {
   label: string;
-  description: string;
   onFileSelect: (file: File) => void;
   statusText?: string;
   disabled?: boolean;
-  validation?: ValidationTooltip;
   templateLabel?: string;
   onTemplateDownload?: () => void;
   resetKey?: number;
@@ -25,11 +16,9 @@ type FileDropzoneProps = {
 
 export function FileDropzone({
   label,
-  description,
   onFileSelect,
   statusText,
   disabled = false,
-  validation,
   templateLabel,
   onTemplateDownload,
   resetKey = 0
@@ -89,12 +78,6 @@ export function FileDropzone({
     onTemplateDownload?.();
   }
 
-  function onValidationClick(event: MouseEvent<HTMLDivElement>) {
-    event.stopPropagation();
-  }
-
-  const isGoodStatus = validation?.statusTone === "good";
-
   return (
     <div
       role="button"
@@ -119,56 +102,20 @@ export function FileDropzone({
           : "border-[var(--panel-border)] bg-[color-mix(in_srgb,var(--panel-strong)_82%,transparent)] hover:border-[color-mix(in_srgb,var(--brand-accent)_40%,transparent)] hover:bg-[color-mix(in_srgb,var(--panel-strong)_95%,transparent)]"
       )}
     >
-      {validation ? (
-        <div className="group/validation absolute right-5 top-5 z-10" onClick={onValidationClick}>
-          <span
-            className={cn(
-              "inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]",
-              validation.statusTone === "warning"
-                ? "brand-status-warning"
-                : validation.statusTone === "good"
-                  ? "brand-status-good"
-                  : "brand-status-neutral"
-            )}
-          >
-            {isGoodStatus ? (
-              <>
-                <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m3.5 8.5 2.5 2.5 6-6" />
-                </svg>
-                <span className="sr-only">{validation.statusLabel}</span>
-              </>
-            ) : (
-              validation.statusLabel
-            )}
-          </span>
-          {validation.details && validation.details.length > 0 ? (
-            <div className="brand-surface pointer-events-none absolute right-0 top-full z-20 mt-3 hidden w-72 rounded-2xl p-3 text-left text-xs text-slate-600 shadow-lg shadow-slate-300/20 backdrop-blur group-hover/validation:block dark:text-slate-300 dark:shadow-none">
-              <p className="font-semibold text-slate-900 dark:text-slate-100">Validation details</p>
-              <ul className="mt-2 space-y-1.5">
-                {validation.details.map((detail) => (
-                  <li key={detail}>{detail}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </div>
-      ) : null}
       <div className="relative z-[1] w-full">
         <div className="space-y-3">
           <span className="brand-badge inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em]">
             {label}
           </span>
-          <div className={description ? "" : "pb-1"}>
+          <div className="pb-1">
             <h3 className="text-2xl font-semibold leading-tight text-slate-900 dark:text-white">
               <span>Drop CSV here or </span>
               <span className="text-[var(--brand-accent)]">click to upload</span>
             </h3>
-            {description ? <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">{description}</p> : null}
           </div>
         </div>
       </div>
-      <div className={`relative z-[1] w-full ${description ? "mt-8" : "mt-4"}`}>
+      <div className="relative z-[1] mt-4 w-full">
         <div className="brand-surface rounded-[1.7rem] px-4 py-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>

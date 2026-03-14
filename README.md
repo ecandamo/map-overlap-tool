@@ -104,9 +104,9 @@ npm run dev
 ### Upload CSV format
 
 ```csv
-IATA,city,country,region,volume
-LHR,London,United Kingdom,Europe,320
-JFK,New York,United States,North America,220
+IATA,volume
+LHR,320
+JFK,220
 ```
 
 ### Airport master CSV format

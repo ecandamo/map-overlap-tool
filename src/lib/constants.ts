@@ -1,6 +1,6 @@
 import { ColorConfig } from "@/lib/types";
 
-export const REQUIRED_COLUMNS = ["IATA", "city", "country", "region", "volume"] as const;
+export const REQUIRED_COLUMNS = ["IATA", "volume"] as const;
 
 export const DEFAULT_COLORS: ColorConfig = {
   apiOnly: "#78BC43",

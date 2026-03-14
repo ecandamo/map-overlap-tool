@@ -1,7 +1,7 @@
-IATA,city,country,region,volume
-LHR,London,United Kingdom,Europe,290
-SIN,Singapore,Singapore,Asia Pacific,150
-JFK,New York,United States,North America,120
-MAD,Madrid,Spain,Europe,90
-CPT,Cape Town,South Africa,Africa,70
-LHR,London,United Kingdom,Europe,20
+IATA,volume
+LHR,290
+SIN,150
+JFK,120
+MAD,90
+CPT,70
+LHR,20

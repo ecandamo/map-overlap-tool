@@ -11,6 +11,7 @@ import { FileDropzone } from "@/components/file-dropzone";
 import { SummaryCard } from "@/components/summary-card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TopOverlapList } from "@/components/top-overlap-list";
+import { ValidationPanel } from "@/components/validation-panel";
 import { REGION_ALL } from "@/lib/constants";
 import { computeSummary, filterPointsByRegion, getRegions } from "@/lib/metrics";
 import { buildAirportMap, combineDatasets } from "@/lib/normalize";
@@ -53,8 +54,6 @@ async function parseCsv(args: {
 function buildValidationSummary(result?: ParsedCsvResult) {
   if (!result) {
     return {
-      statusLabel: "No file",
-      statusTone: "neutral" as const,
       summary: "Upload a CSV to check for issues and unknown IATA codes."
     };
   }
@@ -68,14 +67,7 @@ function buildValidationSummary(result?: ParsedCsvResult) {
   ].filter(Boolean);
 
   return {
-    statusLabel: hasWarnings ? "Review" : "OK",
-    statusTone: hasWarnings ? ("warning" as const) : ("good" as const),
-    summary: hasWarnings ? summaryParts.join(", ") : `${result.matchedIatas.length} matches, no issues found.`,
-    details: [
-      `${result.fileName} loaded with ${result.normalizedRows.length} unique airports.`,
-      issueCount > 0 ? `Issues: ${result.issues.map((issue) => `Row ${issue.rowNumber}: ${issue.message}`).join(" | ")}` : null,
-      unknownCount > 0 ? `Unknown IATA codes: ${result.unknownIatas.join(", ")}` : null
-    ].filter((detail): detail is string => Boolean(detail))
+    summary: hasWarnings ? summaryParts.join(", ") : `${result.matchedIatas.length} matches, no issues found.`
   };
 }
 
@@ -100,6 +92,7 @@ export function MapOverlapApp() {
   const [airportMap, setAirportMap] = useState<Map<string, AirportReference>>(new Map());
   const [loading, setLoading] = useState(false);
   const [controlsExpanded, setControlsExpanded] = useState(true);
+  const [potentialOverlapHelpExpanded, setPotentialOverlapHelpExpanded] = useState(false);
   const [uploadsCollapsed, setUploadsCollapsed] = useState(false);
   const [hasSessionData, setHasSessionData] = useState(false);
   const [dropzoneResetKey, setDropzoneResetKey] = useState(0);
@@ -349,88 +342,48 @@ export function MapOverlapApp() {
             </div>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               <div className="brand-surface rounded-[1.5rem] px-4 py-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">API dataset</p>
-                    <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">{apiResult?.fileName ?? "Not loaded"}</p>
-                  </div>
-                  <span
-                    className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${
-                      apiValidation.statusTone === "warning"
-                        ? "brand-status-warning"
-                        : apiValidation.statusTone === "good"
-                          ? "brand-status-good"
-                          : "brand-status-neutral"
-                    }`}
-                  >
-                    {apiValidation.statusTone === "good" ? (
-                      <>
-                        <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="m3.5 8.5 2.5 2.5 6-6" />
-                        </svg>
-                        <span className="sr-only">{apiValidation.statusLabel}</span>
-                      </>
-                    ) : (
-                      apiValidation.statusLabel
-                    )}
-                  </span>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">API dataset</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">{apiResult?.fileName ?? "Not loaded"}</p>
                 </div>
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{apiValidation.summary}</p>
+                <div className="mt-3">
+                  <ValidationPanel result={apiResult} title="API validation details" compact />
+                </div>
               </div>
               <div className="brand-surface rounded-[1.5rem] px-4 py-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">{clientDisplayName} dataset</p>
-                    <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">{clientResult?.fileName ?? "Not loaded"}</p>
-                  </div>
-                  <span
-                    className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${
-                      clientValidation.statusTone === "warning"
-                        ? "brand-status-warning"
-                        : clientValidation.statusTone === "good"
-                          ? "brand-status-good"
-                          : "brand-status-neutral"
-                    }`}
-                  >
-                    {clientValidation.statusTone === "good" ? (
-                      <>
-                        <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="m3.5 8.5 2.5 2.5 6-6" />
-                        </svg>
-                        <span className="sr-only">{clientValidation.statusLabel}</span>
-                      </>
-                    ) : (
-                      clientValidation.statusLabel
-                    )}
-                  </span>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">{clientDisplayName} dataset</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">{clientResult?.fileName ?? "Not loaded"}</p>
                 </div>
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{clientValidation.summary}</p>
+                <div className="mt-3">
+                  <ValidationPanel result={clientResult} title={`${clientDisplayName} validation details`} compact />
+                </div>
               </div>
             </div>
             <CollapsiblePanel expanded={!uploadsCollapsed} className="mt-5">
               <div className="grid gap-6 lg:grid-cols-2">
                 <FileDropzone
                   label="API DESTINATIONS COVERAGE"
-                  description=""
                   onFileSelect={(file) => void handleFile(file, "api")}
                   disabled={loading || !airportsLoaded}
                   statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
                   templateLabel="API Upload Template"
                   resetKey={dropzoneResetKey}
                   onTemplateDownload={() =>
-                    downloadTextFile("api-template.csv", "IATA,city,country,region,volume\nLHR,London,United Kingdom,Europe,320\nJFK,New York,United States,North America,220\n")
+                    downloadTextFile("api-template.csv", "IATA,volume\nLHR,320\nJFK,220\n")
                   }
                 />
                 <FileDropzone
                   label={`${clientDisplayName} Layovers`}
-                  description=""
                   onFileSelect={(file) => void handleFile(file, "client")}
                   disabled={loading || !airportsLoaded}
                   statusText={!airportsLoaded ? "Loading airport reference data..." : loading ? "Processing file..." : undefined}
                   templateLabel={`${clientDisplayName} Upload Template`}
                   resetKey={dropzoneResetKey}
                   onTemplateDownload={() =>
-                    downloadTextFile("client-template.csv", "IATA,city,country,region,volume\nSIN,Singapore,Singapore,Asia Pacific,150\nLHR,London,United Kingdom,Europe,290\n")
+                    downloadTextFile("client-template.csv", "IATA,volume\nSIN,150\nLHR,290\n")
                   }
                 />
               </div>
@@ -546,15 +499,21 @@ export function MapOverlapApp() {
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Potential Overlap %</p>
-                        <div className="group/tooltip relative">
-                          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[var(--panel-border)] text-[10px] font-semibold text-slate-500 dark:text-slate-400">
-                            i
-                          </span>
-                          <div className="brand-surface pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-2xl p-3 text-xs normal-case tracking-normal text-slate-600 shadow-lg shadow-slate-300/20 backdrop-blur group-hover/tooltip:block dark:text-slate-300 dark:shadow-none">
-                            Potential overlap estimates additional client-only destinations that API may cover based on nearby city, country or region presence.
-                          </div>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setPotentialOverlapHelpExpanded((current) => !current)}
+                          aria-expanded={potentialOverlapHelpExpanded}
+                          aria-controls="potential-overlap-help"
+                          className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[var(--panel-border)] text-[10px] font-semibold text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                        >
+                          i
+                        </button>
                       </div>
+                      <CollapsiblePanel expanded={potentialOverlapHelpExpanded} id="potential-overlap-help" className="mt-2">
+                        <div className="brand-surface rounded-2xl p-3 text-xs text-slate-600 dark:text-slate-300">
+                          Potential overlap estimates additional client-only destinations that API may cover based on nearby city, country or region presence.
+                        </div>
+                      </CollapsiblePanel>
                       <p className="mt-2 text-5xl font-semibold text-slate-950 dark:text-white">{formatPercent(summary.potentialOverlapPercent)}</p>
                     </div>
                   </div>

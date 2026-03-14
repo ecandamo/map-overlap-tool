@@ -30,9 +30,6 @@ export type AirportReference = {
 
 export type NormalizedCsvRow = {
   iata: string;
-  city: string;
-  country: string;
-  region: string;
   volume: number;
 };
 

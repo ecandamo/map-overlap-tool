@@ -1,7 +1,7 @@
 "use client";
 
 import { scaleSqrt } from "d3-scale";
-import { MouseEvent, useMemo, useRef, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { geoEqualEarth } from "d3-geo";
 import { Geographies, Geography, Marker, ComposableMap, Sphere, Graticule } from "react-simple-maps";
 import world from "world-atlas/countries-110m.json";
@@ -30,10 +30,35 @@ type TooltipState = {
 
 export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colors }: OverlapMapProps) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const [visibleCategories, setVisibleCategories] = useState<Record<MapPoint["category"], boolean>>({
+    "api-only": true,
+    "client-only": true,
+    overlap: true
+  });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const maxVolume = Math.max(...points.map((point) => point.totalVolume), 1);
   const radiusScale = useMemo(() => scaleSqrt().domain([0, maxVolume]).range([4, 24]), [maxVolume]);
+  const layeredPoints = useMemo(() => {
+    const layerPriority: Record<MapPoint["category"], number> = {
+      "api-only": 0,
+      "client-only": 1,
+      overlap: 2
+    };
+
+    return [...points].sort((left, right) => {
+      const priorityDiff = layerPriority[left.category] - layerPriority[right.category];
+      if (priorityDiff !== 0) {
+        return priorityDiff;
+      }
+
+      return left.iata.localeCompare(right.iata);
+    });
+  }, [points]);
+  const visiblePoints = useMemo(
+    () => layeredPoints.filter((point) => visibleCategories[point.category]),
+    [layeredPoints, visibleCategories]
+  );
   const projection = useMemo(() => {
     const nextProjection = geoEqualEarth();
 
@@ -70,11 +95,17 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
     return nextProjection;
   }, [points, region]);
   const legendItems = [
-    { label: "API-Only", color: colors.apiOnly },
-    { label: `${clientLabel}-Only`, color: colors.clientOnly },
-    { label: "Overlap", color: colors.overlap }
+    { label: "API-Only", color: colors.apiOnly, category: "api-only" as const },
+    { label: `${clientLabel}-Only`, color: colors.clientOnly, category: "client-only" as const },
+    { label: "Overlap", color: colors.overlap, category: "overlap" as const }
   ];
   const clientOnlyLabel = `${clientLabel}-Only`;
+
+  useEffect(() => {
+    if (tooltip && !visibleCategories[tooltip.point.category]) {
+      setTooltip(null);
+    }
+  }, [tooltip, visibleCategories]);
 
   function getCategoryLabel(category: MapPoint["category"]) {
     if (category === "api-only") {
@@ -97,6 +128,13 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
     });
   }
 
+  function toggleCategory(category: MapPoint["category"]) {
+    setVisibleCategories((current) => ({
+      ...current,
+      [category]: !current[category]
+    }));
+  }
+
   return (
     <div
       ref={containerRef}
@@ -111,10 +149,25 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
         </div>
         <div className="flex flex-wrap gap-2">
           {legendItems.map((item) => (
-            <div key={item.label} className="subtle-chip inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-200">
-              <span className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
-              {item.label}
-            </div>
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => toggleCategory(item.category)}
+              aria-pressed={visibleCategories[item.category]}
+              aria-label={`${visibleCategories[item.category] ? "Hide" : "Show"} ${item.label} bubbles`}
+              title={`${visibleCategories[item.category] ? "Hide" : "Show"} ${item.label} bubbles`}
+              className={`subtle-chip inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition ${
+                visibleCategories[item.category]
+                  ? "scale-100 text-slate-700 dark:text-slate-200"
+                  : "scale-[0.96] opacity-45 text-slate-400 dark:text-slate-500"
+              }`}
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
+                <circle cx="12" cy="12" r="5.5" fill={item.color} />
+                {!visibleCategories[item.category] ? <path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /> : null}
+              </svg>
+              <span>{item.label}</span>
+            </button>
           ))}
         </div>
       </div>
@@ -124,6 +177,15 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
             <h4 className="text-xl font-semibold text-slate-950 dark:text-white">No Mapped Destinations Yet</h4>
             <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
               Upload both CSVs with at least one airport that exists in the reference database, or change the region filter back to all regions.
+            </p>
+          </div>
+        </div>
+      ) : visiblePoints.length === 0 ? (
+        <div className="flex min-h-[28rem] items-center justify-center rounded-[1.5rem] border border-dashed border-black/10 bg-white/40 text-center dark:border-white/10 dark:bg-white/5">
+          <div className="max-w-md px-6">
+            <h4 className="text-xl font-semibold text-slate-950 dark:text-white">All Bubble Types Hidden</h4>
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
+              Turn one or more map icons back on to see airport bubbles again.
             </p>
           </div>
         </div>
@@ -149,7 +211,7 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
             ))
           }
         </Geographies>
-        {points.map((point) => {
+        {visiblePoints.map((point) => {
           const fill =
             point.category === "overlap" ? colors.overlap : point.category === "api-only" ? colors.apiOnly : colors.clientOnly;
 

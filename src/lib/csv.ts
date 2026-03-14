@@ -6,9 +6,6 @@ import { AirportReference, CsvRowInput, DatasetKind, NormalizedCsvRow, ParsedCsv
 
 const rowSchema = z.object({
   iata: z.string().length(3, "IATA must be 3 characters"),
-  city: z.string().min(1, "City is required"),
-  country: z.string().min(1, "Country is required"),
-  region: z.string().min(1, "Region is required"),
   volume: z.number().finite().nonnegative("Volume must be 0 or greater")
 });
 
@@ -32,9 +29,6 @@ function normalizeRow(row: CsvRowInput) {
 
   return {
     iata,
-    city: String(row.city ?? "").trim(),
-    country: String(row.country ?? "").trim(),
-    region: String(row.region ?? "").trim(),
     volume: Number(row.volume)
   };
 }

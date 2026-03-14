@@ -1,4 +1,4 @@
-IATA,city,country,region,volume
-LHR,London,United Kingdom,Europe,290
-SIN,Singapore,Singapore,Asia Pacific,150
-JFK,New York,United States,North America,120
+IATA,volume
+LHR,290
+SIN,150
+JFK,120
