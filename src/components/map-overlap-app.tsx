@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ColorPicker } from "@/components/color-picker";
 import { BrandLogo } from "@/components/brand-logo";
+import { CollapsiblePanel } from "@/components/collapsible-panel";
 import { DataTable } from "@/components/data-table";
 import { FileDropzone } from "@/components/file-dropzone";
 import { SummaryCard } from "@/components/summary-card";
@@ -406,8 +407,8 @@ export function MapOverlapApp() {
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{clientValidation.summary}</p>
               </div>
             </div>
-            {!uploadsCollapsed ? (
-              <div className="mt-5 grid gap-6 lg:grid-cols-2">
+            <CollapsiblePanel expanded={!uploadsCollapsed} className="mt-5">
+              <div className="grid gap-6 lg:grid-cols-2">
                 <FileDropzone
                   label="API DESTINATIONS COVERAGE"
                   description=""
@@ -433,7 +434,7 @@ export function MapOverlapApp() {
                   }
                 />
               </div>
-            ) : null}
+            </CollapsiblePanel>
           </div>
         </section>
 
@@ -458,8 +459,8 @@ export function MapOverlapApp() {
                 <span className={`text-xs transition ${controlsExpanded ? "rotate-180" : ""}`}>⌃</span>
               </button>
             </div>
-            {controlsExpanded ? (
-              <div id="controls-panel" className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.9fr)]">
+            <CollapsiblePanel expanded={controlsExpanded} id="controls-panel" className="mt-6">
+              <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.9fr)]">
                 <div className="panel-soft rounded-[1.9rem] p-4 md:p-5">
                   <div>
                     <p className="section-eyebrow">Data View</p>
@@ -517,7 +518,7 @@ export function MapOverlapApp() {
                   </div>
                 </div>
               </div>
-            ) : null}
+            </CollapsiblePanel>
           </div>
         </section>
 
