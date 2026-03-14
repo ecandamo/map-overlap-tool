@@ -260,6 +260,41 @@ textarea {
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-accent) 16%, transparent);
   }
 
+  .brand-btn-danger {
+    border: 1px solid color-mix(in srgb, #c65353 28%, var(--panel-border));
+    background: color-mix(in srgb, #fff1f1 78%, var(--button-secondary-bg));
+    color: #8b2f2f;
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .brand-btn-danger:hover {
+    background: color-mix(in srgb, #ffe4e4 84%, var(--button-secondary-hover));
+    border-color: color-mix(in srgb, #c65353 40%, var(--panel-border));
+  }
+
+  .brand-btn-danger:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px color-mix(in srgb, #df7d7d 18%, transparent);
+  }
+
+  .dark .brand-btn-danger {
+    border-color: color-mix(in srgb, #d98585 38%, var(--panel-border));
+    background: color-mix(in srgb, rgba(139, 47, 47, 0.34) 74%, var(--button-secondary-bg));
+    color: #ffd5d5;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .dark .brand-btn-danger:hover {
+    background: color-mix(in srgb, rgba(139, 47, 47, 0.44) 78%, var(--button-secondary-hover));
+    border-color: color-mix(in srgb, #efb0b0 40%, var(--panel-border));
+  }
+
   .brand-badge {
     background: var(--badge-bg);
     color: var(--badge-text);

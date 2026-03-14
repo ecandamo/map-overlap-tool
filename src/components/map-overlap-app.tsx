@@ -283,9 +283,15 @@ export function MapOverlapApp() {
                     type="button"
                     onClick={handleCleanData}
                     disabled={loading}
-                    className="brand-btn-secondary rounded-full px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                    className="brand-btn-danger inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    Clean Data
+                    <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M13.25 2.75v3.5h-3.5" />
+                      <path d="M2.75 13.25v-3.5h3.5" />
+                      <path d="M4.2 6.1A4.75 4.75 0 0 1 12.9 4" />
+                      <path d="M11.8 9.9A4.75 4.75 0 0 1 3.1 12" />
+                    </svg>
+                    <span>Start Over</span>
                   </button>
                 ) : null}
               </div>
@@ -304,7 +310,7 @@ export function MapOverlapApp() {
 
         <section className="grid gap-6 lg:grid-cols-2">
           <FileDropzone
-            label="API Hotel Contracts"
+            label="API DESTINATIONS COVERAGE"
             description="Expected columns: IATA, city, country, region, volume. Duplicate airport rows are summed during normalization."
             onFileSelect={(file) => void handleFile(file, "api")}
             disabled={loading || !airportsLoaded}
