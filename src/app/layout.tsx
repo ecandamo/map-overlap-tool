@@ -38,7 +38,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           `}
         </Script>
       </head>
-      <body className={`${plusJakartaSans.variable} ${ibmPlexMono.variable}`}>{children}</body>
+      <body className={`${plusJakartaSans.variable} ${ibmPlexMono.variable} flex min-h-screen flex-col`}>
+        <div className="flex-1">{children}</div>
+        <footer className="px-6 pb-6 pt-2 text-center text-sm text-slate-600 dark:text-slate-400">
+          © 2026 Esteban Candamo. All rights reserved.
+        </footer>
+      </body>
     </html>
   );
 }
