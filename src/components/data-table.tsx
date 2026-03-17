@@ -7,6 +7,7 @@ type DataTableProps = {
   title: string;
   rows: MapPoint[];
   volumeColumns?: "api" | "client" | "both";
+  defaultSort?: "total-volume" | "client-volume";
   clientLabel?: string;
   volumeUnitsLabel?: string;
   variant?: "default" | "feature";
@@ -17,16 +18,27 @@ export function DataTable({
   title,
   rows,
   volumeColumns = "both",
+  defaultSort = "total-volume",
   clientLabel = "Client",
   volumeUnitsLabel = "Volume",
   variant = "default",
   bodyHeight = "default"
 }: DataTableProps) {
   const [search, setSearch] = useState("");
-  const sortedRows = useMemo(
-    () => [...rows].sort((a, b) => b.totalVolume - a.totalVolume || a.iata.localeCompare(b.iata)),
-    [rows]
-  );
+  const sortedRows = useMemo(() => {
+    const shouldSortByClientVolume = defaultSort === "client-volume" && rows.some((row) => row.clientVolume > 0);
+
+    return [...rows].sort((a, b) => {
+      if (shouldSortByClientVolume) {
+        const clientVolumeDiff = b.clientVolume - a.clientVolume;
+        if (clientVolumeDiff !== 0) {
+          return clientVolumeDiff;
+        }
+      }
+
+      return b.totalVolume - a.totalVolume || a.iata.localeCompare(b.iata);
+    });
+  }, [defaultSort, rows]);
   const filteredRows = useMemo(() => {
     const query = search.trim().toLowerCase();
     if (!query) {

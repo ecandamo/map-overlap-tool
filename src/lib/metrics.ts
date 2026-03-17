@@ -81,8 +81,18 @@ export function computeSummary(points: MapPoint[]): SummaryMetrics {
   const overlapPercent = clientDestinations === 0 ? 0 : (overlapDestinations / clientDestinations) * 100;
   const potentialOverlapPercent =
     clientDestinations === 0 ? 0 : Math.min(100, ((overlapDestinations + potentialOverlapScore) / clientDestinations) * 100);
+  const shouldSortByClientVolume = overlapPoints.some((point) => point.clientVolume > 0);
   const topOverlapAirports = [...overlapPoints]
-    .sort((a, b) => b.apiVolume + b.clientVolume - (a.apiVolume + a.clientVolume))
+    .sort((a, b) => {
+      if (shouldSortByClientVolume) {
+        const clientVolumeDiff = b.clientVolume - a.clientVolume;
+        if (clientVolumeDiff !== 0) {
+          return clientVolumeDiff;
+        }
+      }
+
+      return b.apiVolume + b.clientVolume - (a.apiVolume + a.clientVolume);
+    })
     .slice(0, 3);
 
   return {

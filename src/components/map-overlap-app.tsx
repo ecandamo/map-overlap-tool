@@ -528,6 +528,7 @@ export function MapOverlapApp() {
             title="Overlap Destinations"
             rows={categorizedRows.overlap}
             volumeColumns="both"
+            defaultSort="client-volume"
             clientLabel={clientDisplayName}
             volumeUnitsLabel={volumeUnitsLabel}
             variant="feature"
