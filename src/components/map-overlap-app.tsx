@@ -319,8 +319,8 @@ export function MapOverlapApp() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="section-eyebrow">Uploads</p>
-                <h3 className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">
-                  {hasCompleteDataset ? "Data loaded and ready" : "Load your comparison files"}
+                <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">
+                  {hasCompleteDataset ? "Data Loaded & Ready" : "Load Your Comparison Files"}
                 </h3>
                 <p className="muted-copy mt-2 text-sm">
                   {hasCompleteDataset
@@ -395,7 +395,7 @@ export function MapOverlapApp() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="section-eyebrow">Controls</p>
-                <h3 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-white">Tune the view</h3>
+                <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">Tune the View</h3>
                 <p className="muted-copy mt-2 text-sm">
                   Adjust the active client label, focus the map by region, and fine-tune how each category appears.
                 </p>
@@ -464,8 +464,12 @@ export function MapOverlapApp() {
                     <span className="text-xs font-medium uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">Map Colors</span>
                   </div>
                   <div className="mt-4 space-y-3">
-                    <ColorPicker label="API-Only" value={colors.apiOnly} onChange={(value) => setColor("apiOnly", value)} />
-                    <ColorPicker label={clientOnlyLabel} value={colors.clientOnly} onChange={(value) => setColor("clientOnly", value)} />
+                    <ColorPicker label="API Destinations" value={colors.apiOnly} onChange={(value) => setColor("apiOnly", value)} />
+                    <ColorPicker
+                      label={`${clientDisplayName} Destinations`}
+                      value={colors.clientOnly}
+                      onChange={(value) => setColor("clientOnly", value)}
+                    />
                     <ColorPicker label="Overlap" value={colors.overlap} onChange={(value) => setColor("overlap", value)} />
                   </div>
                 </div>
