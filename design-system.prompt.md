@@ -37,6 +37,16 @@ If the target project does not use Tailwind:
 - preserve the component roles and pattern structure
 - match the same spacing, radii, surface treatment, and visual hierarchy
 
+If the target project uses Next.js:
+
+- adapt layout, routing, and font loading to Next conventions
+- preserve the design system itself without assuming Next-specific page structure is part of the brand
+
+If the target project uses Vite:
+
+- adapt app shell, routing, and font loading to Vite conventions
+- preserve the same tokens, primitives, patterns, branding, and theme behavior
+
 ## Visual direction
 
 The system should feel:

@@ -87,7 +87,12 @@
     }
   },
   "implementation": {
-    "framework": "Next.js App Router",
+    "framework_agnostic": true,
+    "reference_framework": "Next.js App Router",
+    "supported_targets": [
+      "Next.js App Router",
+      "Vite + React + TypeScript"
+    ],
     "ui_stack": [
       "React",
       "TypeScript",
@@ -107,7 +112,10 @@
     ],
     "showcase_route": "/design-system",
     "implementation_portability": {
+      "principle": "The design system is framework-agnostic even though this repository is the current reference implementation.",
       "tailwind_projects": "Use CSS variables for tokens and thin wrapper components for repeated variants.",
+      "vite_projects": "Reuse the same token contract, React primitives, brand assets, and theme behavior. Adapt app shell, routing, and font loading to Vite conventions.",
+      "next_projects": "Reuse the same token contract, React primitives, brand assets, and theme behavior. Adapt routing, layout structure, and font loading to Next conventions.",
       "non_tailwind_projects": "Preserve token semantics, component roles, spacing, and hierarchy in the local styling system.",
       "minimum_reuse_units": [
         "tokens",
@@ -292,6 +300,18 @@
         "Avoid flashy or exaggerated motion."
       ]
     },
+    "elevation": {
+      "levels": {
+        "base": "no shadow or minimal separation",
+        "surface": "0 24px 60px rgba(39, 59, 110, 0.12)",
+        "interactive": "0 16px 30px color-mix(in srgb, var(--button-primary) 22%, transparent)",
+        "floating": "shadow-lg equivalent with restrained blur and contrast"
+      },
+      "rules": [
+        "Use stronger elevation for primary surfaces, not for every nested element.",
+        "Prefer layering and blur before dramatic shadow stacking."
+      ]
+    },
     "layering": {
       "page_overlay": 0,
       "surface_content": 1,
@@ -405,6 +425,37 @@
       "status": "partially implemented",
       "notes": "Theme toggle provides a switch-style interaction pattern."
     },
+    "theme_toggle": {
+      "status": "implemented",
+      "component": "src/components/theme-toggle.tsx",
+      "type": "switch",
+      "states": [
+        "light",
+        "dark",
+        "focus",
+        "hover"
+      ],
+      "behavior": {
+        "manual_toggle": true,
+        "persists_preference": true,
+        "storage_key": "map-overlap-theme",
+        "default_behavior": "Respect stored preference when present; otherwise use light mode in this implementation."
+      },
+      "accessibility": {
+        "role": "switch",
+        "requires_aria_checked": true,
+        "requires_accessible_label": true
+      },
+      "placement_rules": [
+        "Place in the top-right area of hero headers or application headers.",
+        "Treat it as a secondary control, not the main CTA.",
+        "Keep it visually compact and consistent across apps."
+      ],
+      "usage_rules": [
+        "Include it in apps where manual theme switching is part of the shared product experience.",
+        "If manual switching is not exposed in a specific app, the theme system still remains part of the design system."
+      ]
+    },
     "dialog": {
       "status": "planned"
     },
@@ -462,7 +513,8 @@
       "rules": [
         "Use panelStrong surface.",
         "Keep logo and title near the top-left.",
-        "Support one or more actions on the right or below the intro copy."
+        "Support one or more actions on the right or below the intro copy.",
+        "Allow the theme toggle in the top-right area when the app exposes manual theme switching."
       ]
     },
     "metric_card": {
@@ -552,6 +604,10 @@
   "layout_rules": {
     "page_width": "max-width ~ 7xl",
     "section_spacing": "2rem default between major sections",
+    "content_width_rules": [
+      "Keep hero copy constrained to readable widths.",
+      "Avoid full-width paragraphs in premium dashboard sections."
+    ],
     "alignment": [
       "Use left-aligned content blocks.",
       "Prefer grid layouts for metrics and supporting sections.",
@@ -570,8 +626,17 @@
     "requirements": [
       "Every core surface and control must have light and dark behavior.",
       "Dark mode should keep the premium glass feel rather than becoming flat charcoal UI.",
-      "Logo variants must respect the active theme."
-    ]
+      "Logo variants must respect the active theme.",
+      "If the app exposes manual theme switching, use a switch-style toggle with persisted preference.",
+      "Theme initialization should avoid visible flicker during first paint when possible."
+    ],
+    "theme_toggle": {
+      "included_in_system": true,
+      "recommended": true,
+      "placement": "top-right of hero or app header",
+      "persistence": "local storage or equivalent client preference store",
+      "fallback_policy": "If no toggle is provided, the app should still implement theme tokens correctly."
+    }
   },
   "visual_rules": {
     "dos": [
@@ -592,6 +657,18 @@
     ]
   },
   "portability": {
+    "framework_support": {
+      "framework_agnostic_design": true,
+      "current_reference_repo": "Next.js",
+      "supported_implementations": [
+        "Next.js",
+        "Vite"
+      ],
+      "notes": [
+        "Design tokens, primitives, patterns, branding, and theme rules are portable across both frameworks.",
+        "Only routing, app bootstrapping, font-loading, and framework-specific composition need adaptation."
+      ]
+    },
     "required_artifacts_for_reuse": [
       "design-system.json",
       "design-system.prompt.md",
