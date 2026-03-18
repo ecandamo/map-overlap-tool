@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 
+import { Surface } from "@/components/ui/surface";
+
 type SummaryCardProps = {
   label: string;
   value: string;
@@ -20,11 +22,12 @@ export function SummaryCard({ label, value, accent, detail, eyebrow, variant = "
         : "text-3xl font-semibold text-slate-950 dark:text-white";
 
   return (
-    <div
+    <Surface
+      variant="brand"
       className={
         variant === "feature"
-          ? "brand-surface relative rounded-[2rem] p-5 shadow-sm"
-          : "brand-surface relative rounded-[1.85rem] p-5 shadow-sm"
+          ? "relative rounded-[2rem] p-5 shadow-sm"
+          : "relative rounded-[1.85rem] p-5 shadow-sm"
       }
     >
       <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(circle_at_top_right,var(--brand-accent-soft),transparent_20%)] dark:bg-[radial-gradient(circle_at_top_right,var(--brand-highlight-soft),transparent_24%)]" />
@@ -45,6 +48,6 @@ export function SummaryCard({ label, value, accent, detail, eyebrow, variant = "
         ) : null}
         {detail ? <div className={`${hideValue ? "mt-2" : "mt-3"} text-sm text-slate-600 dark:text-slate-300`}>{detail}</div> : null}
       </div>
-    </div>
+    </Surface>
   );
 }

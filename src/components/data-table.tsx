@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 
+import { InputField } from "@/components/ui/field";
+import { Surface } from "@/components/ui/surface";
 import { MapPoint } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";
 
@@ -56,13 +58,7 @@ export function DataTable({
     bodyHeight === "large" ? "max-h-[32rem]" : bodyHeight === "medium" ? "max-h-[26rem]" : "";
 
   return (
-    <section
-      className={
-        variant === "feature"
-          ? "panel-strong rounded-[2rem] p-5"
-          : "panel rounded-[2rem] p-5"
-      }
-    >
+    <Surface variant={variant === "feature" ? "panelStrong" : "panel"} as="section" className="rounded-[2rem] p-5">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <p className="section-eyebrow">Data Grid</p>
@@ -86,11 +82,11 @@ export function DataTable({
             <circle cx="8.5" cy="8.5" r="4.75" />
             <path d="M12 12l4.25 4.25" />
           </svg>
-          <input
+          <InputField
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search by IATA, City, Country, or Region"
-            className="brand-input w-full rounded-[1.6rem] px-5 py-3.5 pl-11 text-base placeholder:text-slate-500 dark:placeholder:text-slate-400"
+            className="pl-11 placeholder:text-slate-500 dark:placeholder:text-slate-400"
             aria-label={`Search ${title}`}
           />
         </label>
@@ -128,6 +124,6 @@ export function DataTable({
           </tbody>
         </table>
       </div>
-    </section>
+    </Surface>
   );
 }

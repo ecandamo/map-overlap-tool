@@ -16,6 +16,7 @@ Local-first MVP for comparing API hotel contract destinations against prospect c
 
 - `src/app`: routes, pages, layouts, API endpoints
 - `src/components`: reusable UI for uploads, map, metrics, tables, theme, and admin
+- `src/components/ui`: design-system primitives and patterns
 - `src/lib`: parsing, normalization, metrics, auth, repository abstraction, shared types
 - `src/data`: built-in seed airport reference data
 - `public/templates`: sample upload templates
@@ -36,6 +37,25 @@ Local-first MVP for comparing API hotel contract destinations against prospect c
 - Show region filter, summary metrics, top overlap ranking, and category tables
 - Support light/dark mode toggle
 - Include an admin screen for airport CRUD and bulk airport upload
+- Include a live design system reference page at `/design-system`
+
+## Design system foundation
+
+This project now has the first real layers of a reusable design system:
+
+- Tokens: [src/app/tokens.css](/Users/ecandamo/Documents/Codex/Map Overlap Tool/src/app/tokens.css)
+- Primitives: [src/components/ui/button.tsx](/Users/ecandamo/Documents/Codex/Map Overlap Tool/src/components/ui/button.tsx), [src/components/ui/field.tsx](/Users/ecandamo/Documents/Codex/Map Overlap Tool/src/components/ui/field.tsx), [src/components/ui/badge.tsx](/Users/ecandamo/Documents/Codex/Map Overlap Tool/src/components/ui/badge.tsx), [src/components/ui/surface.tsx](/Users/ecandamo/Documents/Codex/Map Overlap Tool/src/components/ui/surface.tsx)
+- Patterns: [src/components/ui/section-header.tsx](/Users/ecandamo/Documents/Codex/Map Overlap Tool/src/components/ui/section-header.tsx), [src/components/ui/info-card.tsx](/Users/ecandamo/Documents/Codex/Map Overlap Tool/src/components/ui/info-card.tsx)
+- Showcase: `/design-system`
+
+If you want future apps to look consistent, reuse these layers in this order:
+
+1. Copy the token file and global theme contract first.
+2. Reuse the primitives for buttons, fields, badges, and surfaces.
+3. Reuse the patterns for common section layouts and summary cards.
+4. Build app-specific screens from those pieces instead of copying page-level markup.
+
+That is the correct path to a design system. A design system is not a single page style; it is a stable set of tokens, primitives, and patterns that multiple apps can share.
 
 ## API endpoints
 

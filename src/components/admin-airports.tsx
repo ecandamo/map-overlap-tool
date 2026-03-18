@@ -3,6 +3,10 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { BrandLogo } from "@/components/brand-logo";
+import { Button } from "@/components/ui/button";
+import { InputField } from "@/components/ui/field";
+import { SectionHeader } from "@/components/ui/section-header";
+import { Surface } from "@/components/ui/surface";
 import { AirportReference, SessionState } from "@/lib/types";
 
 const emptyForm: AirportReference = {
@@ -145,7 +149,7 @@ export function AdminAirports() {
 
   if (!session.authenticated) {
     return (
-      <section className="panel-strong mx-auto max-w-xl rounded-[2rem] p-8 shadow-sm">
+      <Surface as="section" variant="panelStrong" className="mx-auto max-w-xl rounded-[2rem] p-8 shadow-sm">
         <BrandLogo className="w-[140px]" priority="compact" />
         <h1 className="text-2xl font-semibold text-slate-950 dark:text-white">Admin Login</h1>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">This area is only for managing airport reference data.</p>
@@ -153,84 +157,84 @@ export function AdminAirports() {
           Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env.local`, then sign in here.
         </p>
         <form onSubmit={handleLogin} className="mt-6 space-y-4">
-          <input value={email} onChange={(event) => setEmail(event.target.value)} className="brand-input w-full rounded-2xl px-4 py-3" placeholder="Email" />
-          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="brand-input w-full rounded-2xl px-4 py-3" placeholder="Password" />
-          <button className="brand-btn-primary rounded-full px-5 py-3 text-sm font-semibold">Sign In</button>
+          <InputField value={email} onChange={(event) => setEmail(event.target.value)} className="rounded-2xl px-4 py-3 text-sm" placeholder="Email" />
+          <InputField type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="rounded-2xl px-4 py-3 text-sm" placeholder="Password" />
+          <Button type="submit" className="px-5 py-3">Sign In</Button>
         </form>
         {message ? <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">{message}</p> : null}
-      </section>
+      </Surface>
     );
   }
 
   return (
     <div className="space-y-8">
-      <section className="panel-strong flex flex-col gap-4 rounded-[2rem] p-6 md:flex-row md:items-center md:justify-between">
+      <Surface as="section" variant="panelStrong" className="flex flex-col gap-4 rounded-[2rem] p-6 md:flex-row md:items-center md:justify-between">
         <div>
           <BrandLogo className="mb-4 w-[144px]" priority="compact" />
           <h1 className="text-2xl font-semibold text-slate-950 dark:text-white">Airport Reference Admin</h1>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Add single airports, edit existing records, or bulk-upload a master file.</p>
         </div>
         <div className="flex gap-3">
-          <a href="/templates/airport-master-template.csv" className="brand-btn-secondary rounded-full px-4 py-2 text-sm font-medium">
+          <a href="/templates/airport-master-template.csv" className="brand-btn-secondary inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium">
             Download Template
           </a>
-          <button onClick={handleLogout} className="brand-btn-secondary rounded-full px-4 py-2 text-sm font-medium">
+          <Button onClick={handleLogout} variant="secondary" size="sm">
             Sign Out
-          </button>
+          </Button>
         </div>
-      </section>
+      </Surface>
 
       <section className="grid gap-6 lg:grid-cols-[1fr_1.4fr]">
-        <form onSubmit={handleSave} className="panel space-y-4 rounded-[2rem] p-6">
-          <h2 className="text-lg font-semibold text-slate-950 dark:text-white">{editing ? `Edit ${editing}` : "Add Airport"}</h2>
+        <Surface as="form" variant="panel" onSubmit={handleSave} className="space-y-4 rounded-[2rem] p-6">
+          <SectionHeader title={editing ? `Edit ${editing}` : "Add Airport"} />
           {(["iata", "city", "country", "region"] as const).map((field) => (
-            <input
+            <InputField
               key={field}
               value={String(form[field])}
               onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))}
-              className="brand-input w-full rounded-2xl px-4 py-3"
+              className="rounded-2xl px-4 py-3 text-sm"
               placeholder={field.toUpperCase()}
             />
           ))}
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block">
               <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Latitude</span>
-              <input
+              <InputField
                 type="number"
                 step="0.0001"
                 value={form.latitude}
                 onChange={(event) => setForm((current) => ({ ...current, latitude: Number(event.target.value) }))}
-                className="brand-input w-full rounded-2xl px-4 py-3"
+                className="rounded-2xl px-4 py-3 text-sm"
                 placeholder="Latitude"
               />
             </label>
             <label className="block">
               <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Longitude</span>
-              <input
+              <InputField
                 type="number"
                 step="0.0001"
                 value={form.longitude}
                 onChange={(event) => setForm((current) => ({ ...current, longitude: Number(event.target.value) }))}
-                className="brand-input w-full rounded-2xl px-4 py-3"
+                className="rounded-2xl px-4 py-3 text-sm"
                 placeholder="Longitude"
               />
             </label>
           </div>
           <div className="flex gap-3">
-            <button className="brand-btn-primary rounded-full px-5 py-3 text-sm font-semibold">
+            <Button type="submit" className="px-5 py-3">
               {editing ? "Update Airport" : "Add Airport"}
-            </button>
+            </Button>
             {editing ? (
-              <button
-                type="button"
+              <Button
                 onClick={() => {
                   setEditing(null);
                   setForm(emptyForm);
                 }}
-                className="brand-btn-secondary rounded-full px-5 py-3 text-sm font-medium"
+                variant="secondary"
+                className="px-5 py-3"
               >
                 Cancel
-              </button>
+              </Button>
             ) : null}
           </div>
           <label className="block rounded-[1.5rem] border border-dashed border-[var(--panel-border)] bg-[color-mix(in_srgb,var(--panel-strong)_80%,transparent)] p-4 text-sm">
@@ -248,21 +252,22 @@ export function AdminAirports() {
             />
           </label>
           {message ? <p className="text-sm text-slate-500 dark:text-slate-400">{message}</p> : null}
-        </form>
+        </Surface>
 
-        <section className="panel rounded-[2rem] p-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-950 dark:text-white">Airport Reference Records</h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{filteredAirports.length} Rows Visible</p>
-            </div>
-            <input
+        <Surface as="section" variant="panel" className="rounded-[2rem] p-6">
+          <SectionHeader
+            title="Airport Reference Records"
+            description={`${filteredAirports.length} Rows Visible`}
+            className="flex-col gap-4 md:flex-row md:items-center"
+            meta={
+              <InputField
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search by IATA, City, Country, or Region"
-              className="brand-input w-full rounded-2xl px-4 py-3 text-sm md:max-w-sm"
-            />
-          </div>
+              className="rounded-2xl px-4 py-3 text-sm md:min-w-[20rem]"
+              />
+            }
+          />
           <div className="mt-4 max-h-[36rem] overflow-auto">
             <table className="min-w-full text-sm">
               <thead className="text-left text-slate-500 dark:text-slate-400">
@@ -287,18 +292,20 @@ export function AdminAirports() {
                     <td className="py-3">{airport.longitude}</td>
                     <td className="py-3">
                       <div className="flex gap-2">
-                        <button
+                        <Button
                           onClick={() => {
                             setEditing(airport.iata);
                             setForm(airport);
                           }}
-                          className="rounded-full border border-black/10 px-3 py-1 dark:border-white/10"
+                          variant="secondary"
+                          size="sm"
+                          className="border-black/10 px-3 py-1 dark:border-white/10"
                         >
                           Edit
-                        </button>
-                        <button onClick={() => void handleDelete(airport.iata)} className="rounded-full border border-black/10 px-3 py-1 dark:border-white/10">
+                        </Button>
+                        <Button onClick={() => void handleDelete(airport.iata)} variant="secondary" size="sm" className="border-black/10 px-3 py-1 dark:border-white/10">
                           Delete
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -313,7 +320,7 @@ export function AdminAirports() {
               </tbody>
             </table>
           </div>
-        </section>
+        </Surface>
       </section>
     </div>
   );

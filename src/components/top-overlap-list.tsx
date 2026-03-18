@@ -1,3 +1,6 @@
+import { InfoCard } from "@/components/ui/info-card";
+import { SectionHeader } from "@/components/ui/section-header";
+import { Surface } from "@/components/ui/surface";
 import { MapPoint } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";
 
@@ -9,14 +12,8 @@ type TopOverlapListProps = {
 
 export function TopOverlapList({ rows, clientLabel = "Client", volumeUnitsLabel = "Volume" }: TopOverlapListProps) {
   return (
-    <section className="panel rounded-[2rem] p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <p className="section-eyebrow">Leaderboard</p>
-          <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">Top 3 Overlap Airports</h3>
-        </div>
-        <span className="text-sm text-slate-500 dark:text-slate-400">{rows.length} Ranked</span>
-      </div>
+    <Surface as="section" variant="panel" className="rounded-[2rem] p-5">
+      <SectionHeader eyebrow="Leaderboard" title="Top 3 Overlap Airports" meta={<span className="text-sm text-slate-500 dark:text-slate-400">{rows.length} Ranked</span>} />
       {rows.length === 0 ? (
         <p className="text-sm text-slate-500 dark:text-slate-400">Upload Both Files and Keep at Least One Overlapping Airport in the Current Region to See Rankings.</p>
       ) : (
@@ -33,19 +30,13 @@ export function TopOverlapList({ rows, clientLabel = "Client", volumeUnitsLabel 
                 <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{row.country} · {row.region}</p>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
-                <div className="rounded-2xl bg-white/80 px-3 py-2 dark:bg-slate-950/70">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">API {volumeUnitsLabel}</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-950 dark:text-white">{formatNumber(row.apiVolume)}</p>
-                </div>
-                <div className="rounded-2xl bg-white/80 px-3 py-2 dark:bg-slate-950/70">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">{clientLabel} {volumeUnitsLabel}</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-950 dark:text-white">{formatNumber(row.clientVolume)}</p>
-                </div>
+                <InfoCard title={`API ${volumeUnitsLabel}`} description={formatNumber(row.apiVolume)} className="rounded-2xl bg-white/80 px-3 py-2 dark:bg-slate-950/70" />
+                <InfoCard title={`${clientLabel} ${volumeUnitsLabel}`} description={formatNumber(row.clientVolume)} className="rounded-2xl bg-white/80 px-3 py-2 dark:bg-slate-950/70" />
               </div>
             </div>
           ))}
         </div>
       )}
-    </section>
+    </Surface>
   );
 }

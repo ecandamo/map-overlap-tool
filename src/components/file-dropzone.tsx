@@ -2,6 +2,8 @@
 
 import { ChangeEvent, DragEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
+import { Surface } from "@/components/ui/surface";
 import { cn } from "@/lib/utils";
 
 type FileDropzoneProps = {
@@ -104,9 +106,7 @@ export function FileDropzone({
     >
       <div className="relative z-[1] w-full">
         <div className="space-y-3">
-          <span className="brand-badge inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em]">
-            {label}
-          </span>
+          <Badge>{label}</Badge>
           <div className="pb-1">
             <h3 className="text-2xl font-semibold leading-tight text-slate-900 dark:text-white">
               <span>Drop CSV here or </span>
@@ -116,7 +116,7 @@ export function FileDropzone({
         </div>
       </div>
       <div className="relative z-[1] mt-4 w-full">
-        <div className="brand-surface rounded-[1.7rem] px-4 py-3">
+        <Surface variant="brand" className="rounded-[1.7rem] px-4 py-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Upload Format</p>
@@ -136,7 +136,7 @@ export function FileDropzone({
               .
             </p>
           ) : null}
-        </div>
+        </Surface>
       </div>
       {statusText ? <div className="relative z-[1] w-full text-sm text-slate-500 dark:text-slate-400">{statusText}</div> : null}
       <input ref={inputRef} hidden type="file" accept=".csv,text/csv" onChange={onChange} disabled={disabled} />

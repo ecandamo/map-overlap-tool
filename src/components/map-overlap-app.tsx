@@ -10,6 +10,11 @@ import { DataTable } from "@/components/data-table";
 import { FileDropzone } from "@/components/file-dropzone";
 import { SummaryCard } from "@/components/summary-card";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { InputField, SelectField } from "@/components/ui/field";
+import { InfoCard } from "@/components/ui/info-card";
+import { SectionHeader } from "@/components/ui/section-header";
+import { Surface } from "@/components/ui/surface";
 import { TopOverlapList } from "@/components/top-overlap-list";
 import { ValidationPanel } from "@/components/validation-panel";
 import { REGION_ALL } from "@/lib/constants";
@@ -28,14 +33,14 @@ const OverlapMap = dynamic(
   () => import("@/components/overlap-map").then((module) => module.OverlapMap),
   {
     loading: () => (
-      <section className="panel rounded-[2rem] p-5">
+      <Surface as="section" variant="panel" className="rounded-[2rem] p-5">
         <div className="flex min-h-[28rem] items-center justify-center rounded-[1.5rem] border border-dashed border-black/10 bg-white/40 text-center dark:border-white/10 dark:bg-white/5">
           <div className="max-w-md px-6">
             <h4 className="text-xl font-semibold text-slate-950 dark:text-white">Loading Map</h4>
             <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">Preparing the World Map and Marker Layers.</p>
           </div>
         </div>
-      </section>
+      </Surface>
     ),
     ssr: false
   }
@@ -255,7 +260,7 @@ export function MapOverlapApp() {
   return (
     <main className="app-shell min-h-screen px-4 py-6 text-slate-900 transition dark:text-slate-100 md:px-8 md:py-8">
       <div className="mx-auto max-w-7xl space-y-8">
-        <section className="panel-strong hero-shell relative overflow-hidden rounded-[2.75rem] p-6 md:p-8">
+        <Surface as="section" variant="panelStrong" className="hero-shell relative overflow-hidden rounded-[2.75rem] p-6 md:p-8">
           <div className="absolute right-5 top-5 z-10 md:right-6 md:top-6">
             <ThemeToggle />
           </div>
@@ -273,23 +278,21 @@ export function MapOverlapApp() {
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   href="/admin"
-                  className="brand-btn-secondary rounded-full px-4 py-2.5 text-sm font-medium transition"
+                  className="brand-btn-secondary inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-medium transition"
                 >
                   Admin Login
                 </a>
-                <button
+                <Button
                   onClick={handleLoadDemo}
                   disabled={loading}
-                  className="brand-btn-primary rounded-full px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading ? "Loading..." : "Load Demo Data"}
-                </button>
+                </Button>
                 {hasSessionData ? (
-                  <button
-                    type="button"
+                  <Button
                     onClick={handleCleanData}
                     disabled={loading}
-                    className="brand-btn-danger inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                    variant="danger"
                   >
                     <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M13.25 2.75v3.5h-3.5" />
@@ -298,68 +301,60 @@ export function MapOverlapApp() {
                       <path d="M11.8 9.9A4.75 4.75 0 0 1 3.1 12" />
                     </svg>
                     <span>Start Over</span>
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             </div>
           </div>
-        </section>
+        </Surface>
 
         {!apiResult || !clientResult ? (
-          <section className="panel-soft rounded-[2.2rem] border-dashed p-10 text-center">
+          <Surface as="section" variant="panelSoft" className="rounded-[2.2rem] border-dashed p-10 text-center">
             <h2 className="text-2xl font-semibold text-slate-950 dark:text-white">Start with two CSVs or load the demo</h2>
             <p className="muted-copy mt-3">
               {`The app will validate uploads, combine duplicates, flag unknown IATA codes, and render API-only, ${clientOnlyLabel.toLowerCase()}, and overlap destinations together.`}
             </p>
-          </section>
+          </Surface>
         ) : null}
 
         <section className="space-y-4">
-          <div className="panel rounded-[2.2rem] p-4 md:p-5">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="section-eyebrow">Uploads</p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">
-                  {hasCompleteDataset ? "Data Loaded & Ready" : "Load Your Comparison Files"}
-                </h3>
-                <p className="muted-copy mt-2 text-sm">
-                  {hasCompleteDataset
-                    ? "Both datasets are active. Expand this section any time to replace either file."
-                    : "Upload both datasets or load the demo to begin the overlap comparison."}
-                </p>
-              </div>
-              {hasCompleteDataset ? (
-                <button
-                  type="button"
-                  onClick={() => setUploadsCollapsed((current) => !current)}
-                  className="brand-btn-secondary inline-flex items-center gap-2 self-start rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition dark:text-slate-300"
-                >
-                  <span>{uploadsCollapsed ? "Change Files" : "Collapse"}</span>
-                  <span aria-hidden="true" className={`text-xs transition ${uploadsCollapsed ? "" : "rotate-180"}`}>⌄</span>
-                </button>
-              ) : null}
-            </div>
+          <Surface variant="panel" className="rounded-[2.2rem] p-4 md:p-5">
+            <SectionHeader
+              eyebrow="Uploads"
+              title={hasCompleteDataset ? "Data Loaded & Ready" : "Load Your Comparison Files"}
+              description={
+                hasCompleteDataset
+                  ? "Both datasets are active. Expand this section any time to replace either file."
+                  : "Upload both datasets or load the demo to begin the overlap comparison."
+              }
+              className="flex-col gap-4 md:flex-row md:items-center"
+              meta={
+                hasCompleteDataset ? (
+                  <Button
+                    onClick={() => setUploadsCollapsed((current) => !current)}
+                    variant="secondary"
+                    size="sm"
+                    className="self-start text-slate-600 dark:text-slate-300"
+                  >
+                    <span>{uploadsCollapsed ? "Change Files" : "Collapse"}</span>
+                    <span aria-hidden="true" className={`text-xs transition ${uploadsCollapsed ? "" : "rotate-180"}`}>⌄</span>
+                  </Button>
+                ) : null
+              }
+            />
             <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <div className="brand-surface rounded-[1.5rem] px-4 py-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">API dataset</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">{apiResult?.fileName ?? "Not loaded"}</p>
-                </div>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{apiValidation.summary}</p>
+              <InfoCard title="API dataset" description={apiResult?.fileName ?? "Not loaded"}>
+                <p>{apiValidation.summary}</p>
                 <div className="mt-3">
                   <ValidationPanel result={apiResult} title="API validation details" compact />
                 </div>
-              </div>
-              <div className="brand-surface rounded-[1.5rem] px-4 py-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">{clientDisplayName} dataset</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">{clientResult?.fileName ?? "Not loaded"}</p>
-                </div>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{clientValidation.summary}</p>
+              </InfoCard>
+              <InfoCard title={`${clientDisplayName} dataset`} description={clientResult?.fileName ?? "Not loaded"}>
+                <p>{clientValidation.summary}</p>
                 <div className="mt-3">
                   <ValidationPanel result={clientResult} title={`${clientDisplayName} validation details`} compact />
                 </div>
-              </div>
+              </InfoCard>
             </div>
             <CollapsiblePanel expanded={!uploadsCollapsed} className="mt-5">
               <div className="grid gap-6 lg:grid-cols-2">
@@ -387,33 +382,32 @@ export function MapOverlapApp() {
                 />
               </div>
             </CollapsiblePanel>
-          </div>
+          </Surface>
         </section>
 
         <section>
-          <div className="panel rounded-[2.2rem] p-5 md:p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="section-eyebrow">Controls</p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">Tune the View</h3>
-                <p className="muted-copy mt-2 text-sm">
-                  Adjust the active client label, focus the map by region, and fine-tune how each category appears.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setControlsExpanded((current) => !current)}
-                className="brand-btn-secondary inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition dark:text-slate-300"
-                aria-expanded={controlsExpanded}
-                aria-controls="controls-panel"
-              >
-                <span>{controlsExpanded ? "Collapse" : "Expand"}</span>
-                <span className={`text-xs transition ${controlsExpanded ? "rotate-180" : ""}`}>⌃</span>
-              </button>
-            </div>
+          <Surface variant="panel" className="rounded-[2.2rem] p-5 md:p-6">
+            <SectionHeader
+              eyebrow="Controls"
+              title="Tune the View"
+              description="Adjust the active client label, focus the map by region, and fine-tune how each category appears."
+              meta={
+                <Button
+                  onClick={() => setControlsExpanded((current) => !current)}
+                  variant="secondary"
+                  size="sm"
+                  className="text-slate-600 dark:text-slate-300"
+                  aria-expanded={controlsExpanded}
+                  aria-controls="controls-panel"
+                >
+                  <span>{controlsExpanded ? "Collapse" : "Expand"}</span>
+                  <span className={`text-xs transition ${controlsExpanded ? "rotate-180" : ""}`}>⌃</span>
+                </Button>
+              }
+            />
             <CollapsiblePanel expanded={controlsExpanded} id="controls-panel" className="mt-6">
               <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.9fr)]">
-                <div className="panel-soft rounded-[1.9rem] p-4 md:p-5">
+                <Surface variant="panelSoft" className="rounded-[1.9rem] p-4 md:p-5">
                   <div>
                     <p className="section-eyebrow">Data View</p>
                     <p className="muted-copy mt-2 text-sm">Set the client label, define the volume units used in the comparison, and narrow the map to a specific region.</p>
@@ -421,43 +415,43 @@ export function MapOverlapApp() {
                   <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     <label className="block">
                       <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Client Name</span>
-                      <input
+                      <InputField
                         value={clientName}
                         onChange={(event) => setClientName(event.target.value)}
                         placeholder="Enter Client Name"
-                        className="field-shell w-full rounded-2xl px-4 py-3 text-slate-900 dark:text-slate-100"
+                        className="rounded-2xl px-4 py-3 text-sm text-slate-900 dark:text-slate-100"
                       />
                       <p className="muted-copy mt-2 text-xs">Used in section titles, map labels, and summary cards.</p>
                     </label>
                     <label className="block">
                       <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Volume Units</span>
-                      <input
+                      <InputField
                         value={volumeUnits}
                         onChange={(event) => setVolumeUnits(event.target.value)}
                         placeholder="Rooms, contracts, nights..."
-                        className="field-shell w-full rounded-2xl px-4 py-3 text-slate-900 dark:text-slate-100"
+                        className="rounded-2xl px-4 py-3 text-sm text-slate-900 dark:text-slate-100"
                       />
                       <p className="muted-copy mt-2 text-xs">Defines what the uploaded volume values represent across the comparison.</p>
                     </label>
                     <label className="block">
                       <span className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Region Filter</span>
-                      <select
+                      <SelectField
                         value={region}
                         onChange={(event) => setRegion(event.target.value)}
-                        className="field-shell w-full rounded-2xl px-4 py-3 text-slate-900 dark:text-slate-100"
+                        className="text-sm"
                       >
                         <option>{REGION_ALL}</option>
                         {regions.map((regionValue) => (
                           <option key={regionValue}>{regionValue}</option>
                         ))}
-                      </select>
+                      </SelectField>
                       <p className="muted-copy mt-2 text-xs">
                         Showing {formatNumber(filteredPoints.length)} mapped destinations in {region === REGION_ALL ? "all regions" : region}.
                       </p>
                     </label>
                   </div>
-                </div>
-                <div className="panel-soft rounded-[1.9rem] p-4 md:p-5">
+                </Surface>
+                <Surface variant="panelSoft" className="rounded-[1.9rem] p-4 md:p-5">
                   <p className="section-eyebrow">Appearance</p>
                   <div className="mt-1 flex items-center justify-between gap-4">
                     <p className="muted-copy text-sm">Choose the marker colors used for each destination category.</p>
@@ -472,10 +466,10 @@ export function MapOverlapApp() {
                     />
                     <ColorPicker label="Overlap" value={colors.overlap} onChange={(value) => setColor("overlap", value)} />
                   </div>
-                </div>
+                </Surface>
               </div>
             </CollapsiblePanel>
-          </div>
+          </Surface>
         </section>
 
         <section className="grid gap-4 xl:grid-cols-[1.4fr_0.95fr]">

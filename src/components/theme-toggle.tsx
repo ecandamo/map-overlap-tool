@@ -2,6 +2,7 @@
 
 import { useAppStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 function SunIcon({ active }: { active: boolean }) {
   return (
@@ -38,16 +39,13 @@ export function ThemeToggle() {
   const isDark = theme === "dark";
 
   return (
-    <button
-      type="button"
+    <Button
       role="switch"
       aria-checked={isDark}
       aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={cn(
-        "brand-btn-secondary inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 shadow-sm transition-colors duration-200",
-        "text-slate-900 dark:text-slate-100"
-      )}
+      variant="secondary"
+      className={cn("px-2.5 py-1.5 shadow-sm transition-colors duration-200")}
     >
       <span className="flex items-center gap-1.5">
         <SunIcon active={!isDark} />
@@ -68,6 +66,6 @@ export function ThemeToggle() {
         <MoonIcon active={isDark} />
       </span>
       <span className="sr-only">{isDark ? "Dark Mode Enabled" : "Light Mode Enabled"}</span>
-    </button>
+    </Button>
   );
 }
