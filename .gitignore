@@ -3,3 +3,6 @@ node_modules
 .env
 .env.local
 data/airports.json
+.vercel
+.DS_Store
+**/.DS_Store
