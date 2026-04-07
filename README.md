@@ -2,6 +2,8 @@
 
 Local-first MVP for comparing API hotel contract destinations against prospect client layover destinations on a world map.
 
+**End-user instructions (non-technical):** [USER_GUIDE.md](./USER_GUIDE.md)
+
 ## Recommended stack
 
 - Framework: Next.js App Router with React + TypeScript
@@ -140,6 +142,7 @@ Template file: `public/templates/airport-master-template.csv`
 
 ## Notes on deployment
 
+- **Vercel does not use `.env.local`.** That file only applies locally. For admin login and sessions to work in production, add `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `SESSION_SECRET` under the project’s **Settings → Environment Variables** in Vercel (at minimum for **Production**), then **redeploy** so new values are applied.
 - Current default persistence is `data/airports.json`, which is perfect for local use.
 - If `DATABASE_URL` is set, the repository switches to Neon/Postgres-backed airport CRUD.
 - For deployed environments, run `npm run db:seed-neon` once after setting `DATABASE_URL` to create tables and import the current airport/admin data into Neon.
