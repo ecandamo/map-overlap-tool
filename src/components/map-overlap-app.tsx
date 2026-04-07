@@ -107,11 +107,19 @@ export function MapOverlapApp() {
 
   useEffect(() => {
     async function loadAirports() {
-      const response = await fetch("/api/airports");
-      const data = (await response.json()) as { airports: AirportReference[] };
-      setAirportMap(buildAirportMap(data.airports));
-      setAirportsLoaded(true);
-      airportLoadAttempted.current = true;
+      try {
+        const response = await fetch("/api/airports");
+        if (!response.ok) {
+          throw new Error(`Airports request failed: ${response.status}`);
+        }
+        const data = (await response.json()) as { airports: AirportReference[] };
+        setAirportMap(buildAirportMap(data.airports ?? []));
+      } catch {
+        setAirportMap(new Map());
+      } finally {
+        setAirportsLoaded(true);
+        airportLoadAttempted.current = true;
+      }
     }
 
     void loadAirports();

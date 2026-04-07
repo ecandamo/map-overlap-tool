@@ -16,6 +16,16 @@ async function ensureDataFile() {
   }
 }
 
+/** Read merged JSON without creating files (serverless FS is read-only; gitignored path may be absent). */
+async function readOptionalLocalAirports(): Promise<AirportReference[]> {
+  try {
+    const content = await fs.readFile(DATA_PATH, "utf8");
+    return JSON.parse(content) as AirportReference[];
+  } catch {
+    return [];
+  }
+}
+
 async function readLocalAirports(): Promise<AirportReference[]> {
   await ensureDataFile();
   const content = await fs.readFile(DATA_PATH, "utf8");
@@ -29,7 +39,7 @@ async function writeLocalAirports(airports: AirportReference[]) {
 
 export class FileAirportRepository implements AirportRepository {
   async getAll() {
-    const localAirports = await readLocalAirports();
+    const localAirports = await readOptionalLocalAirports();
     const merged = new Map<string, AirportReference>();
 
     [...seedAirports, ...localAirports].forEach((airport) => {
