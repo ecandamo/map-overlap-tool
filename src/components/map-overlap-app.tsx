@@ -33,8 +33,8 @@ const OverlapMap = dynamic(
   () => import("@/components/overlap-map").then((module) => module.OverlapMap),
   {
     loading: () => (
-      <Surface as="section" variant="panel" className="rounded-[2rem] p-5">
-        <div className="flex min-h-[28rem] items-center justify-center rounded-[1.5rem] border border-dashed border-black/10 bg-white/40 text-center dark:border-white/10 dark:bg-white/5">
+      <Surface as="section" variant="panel" className="rounded-4xl p-5">
+        <div className="flex min-h-112 items-center justify-center rounded-3xl border border-dashed border-black/10 bg-white/40 text-center dark:border-white/10 dark:bg-white/5">
           <div className="max-w-md px-6">
             <h4 className="text-xl font-semibold text-slate-950 dark:text-white">Loading Map</h4>
             <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">Preparing the World Map and Marker Layers.</p>
@@ -505,7 +505,7 @@ export function MapOverlapApp() {
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Potential Overlap %</p>
                         <div className="group/tooltip relative">
-                          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[var(--panel-border)] text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-(--panel-border) text-[10px] font-semibold text-slate-500 dark:text-slate-400">
                             i
                           </span>
                           <div className="brand-surface pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-2xl p-3 text-xs normal-case tracking-normal text-slate-600 shadow-lg shadow-slate-300/20 backdrop-blur group-hover/tooltip:block dark:text-slate-300 dark:shadow-none">
