@@ -6,3 +6,4 @@ data/airports.json
 .vercel
 .DS_Store
 **/.DS_Store
+*.tsbuildinfo
