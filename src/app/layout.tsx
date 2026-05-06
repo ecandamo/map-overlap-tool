@@ -16,7 +16,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "API Layover Overlap Mapper",
+  title: "Destination Overlap Mapper",
   description: "Branded overlap mapping workspace for comparing API hotel contract destinations and client layover destinations."
 };
 

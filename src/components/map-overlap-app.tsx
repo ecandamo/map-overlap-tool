@@ -278,7 +278,7 @@ export function MapOverlapApp() {
                 <BrandLogo className="w-[148px] md:w-[172px]" />
               </div>
               <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[0.96] text-slate-950 dark:text-white md:text-6xl xl:text-[4.35rem]">
-                Layover Overlap Mapper
+                Destination Overlap Mapper
               </h1>
               <p className="muted-copy mt-5 max-w-2xl text-base md:text-lg">
                 Compare API and client airport data from CSV files, plot locations on a map, and view overlap % plus potential overlap % from API’s worldwide coverage.

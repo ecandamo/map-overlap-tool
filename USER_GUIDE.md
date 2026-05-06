@@ -1,10 +1,10 @@
-# Layover Overlap Mapper — User Guide
+# Destination Overlap Mapper — User Guide
 
 This guide explains how to use the tool. You do not need any technical background.
 
 ## What this tool does
 
-The **Layover Overlap Mapper** helps you compare two lists of airport destinations:
+The **Destination Overlap Mapper** helps you compare two lists of airport destinations:
 
 1. **API destinations** — Where your hotel program or API has coverage (with a volume for each airport).
 2. **Client layovers** — Where your prospect or client has crew layovers (with a volume for each airport).
