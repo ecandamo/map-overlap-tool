@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { InputField } from "@/components/ui/field";
 import { Surface } from "@/components/ui/surface";
 import { MapPoint } from "@/lib/types";
-import { formatNumber } from "@/lib/utils";
+import { downloadTextFile, formatNumber } from "@/lib/utils";
 
 type DataTableProps = {
   title: string;
@@ -57,6 +57,31 @@ export function DataTable({
   const bodyHeightClassName =
     bodyHeight === "large" ? "max-h-[32rem]" : bodyHeight === "medium" ? "max-h-[26rem]" : "";
 
+  function handleDownloadCsv() {
+    const isFiltered = search.trim().length > 0;
+    const headers = [
+      "IATA",
+      "City",
+      "Country",
+      "Region",
+      ...(showApiVolume ? [`API ${volumeUnitsLabel}`] : []),
+      ...(showClientVolume ? [`${clientLabel} ${volumeUnitsLabel}`] : []),
+    ];
+    const csvRows = filteredRows.map((row) => [
+      row.iata,
+      row.city,
+      row.country,
+      row.region,
+      ...(showApiVolume ? [row.apiVolume] : []),
+      ...(showClientVolume ? [row.clientVolume] : []),
+    ]);
+    const csv = [headers, ...csvRows]
+      .map((r) => r.map((cell) => (String(cell).includes(",") ? `"${cell}"` : cell)).join(","))
+      .join("\n");
+    const filename = `${title.toLowerCase().replace(/\s+/g, "-")}${isFiltered ? "-filtered" : ""}.csv`;
+    downloadTextFile(filename, csv);
+  }
+
   return (
     <Surface variant={variant === "feature" ? "panelStrong" : "panel"} as="section" className="rounded-[2rem] p-5">
       <div className="mb-4 flex items-center justify-between">
@@ -64,7 +89,23 @@ export function DataTable({
           <p className="section-eyebrow">Data Grid</p>
           <h3 className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
         </div>
-        <span className="text-sm text-slate-500 dark:text-slate-400">{filteredRows.length} Airports</span>
+        <div className="flex items-center gap-2">
+          {rows.length > 0 ? (
+            <button
+              type="button"
+              onClick={handleDownloadCsv}
+              title={search.trim() ? `Download ${filteredRows.length} filtered airports as CSV` : `Download all ${rows.length} airports as CSV`}
+              className="subtle-chip inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium text-slate-700 transition dark:text-slate-200"
+            >
+              <svg aria-hidden="true" viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 3v9M6.5 8.5 10 12l3.5-3.5" />
+                <path d="M3 14v1.5A1.5 1.5 0 0 0 4.5 17h11A1.5 1.5 0 0 0 17 15.5V14" />
+              </svg>
+              {search.trim() ? `CSV (${filteredRows.length})` : "CSV"}
+            </button>
+          ) : null}
+          <span className="text-sm text-slate-500 dark:text-slate-400">{filteredRows.length} Airports</span>
+        </div>
       </div>
       <div className="mb-4">
         <label className="relative block">

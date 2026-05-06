@@ -8,7 +8,7 @@ import world from "world-atlas/countries-110m.json";
 
 import { REGION_ALL } from "@/lib/constants";
 import { MapPoint } from "@/lib/types";
-import { formatNumber } from "@/lib/utils";
+import { downloadHtmlFile, formatNumber } from "@/lib/utils";
 
 type OverlapMapProps = {
   points: MapPoint[];
@@ -323,6 +323,261 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
     setTooltip(null);
   }
 
+  function findMapSvgElement(root: HTMLElement): SVGElement | null {
+    const candidates = Array.from(root.querySelectorAll("svg"));
+    let best: SVGElement | null = null;
+    let bestArea = 0;
+    for (const svg of candidates) {
+      const vb = svg.getAttribute("viewBox");
+      let area = 0;
+      if (vb) {
+        const parts = vb.trim().split(/[\s,]+/).map(Number);
+        if (parts.length === 4 && parts.every((n) => !Number.isNaN(n))) {
+          area = parts[2] * parts[3];
+        }
+      }
+      if (area === 0) {
+        const rect = svg.getBoundingClientRect();
+        area = rect.width * rect.height;
+      }
+      if (area > bestArea) {
+        bestArea = area;
+        best = svg;
+      }
+    }
+    if (best && bestArea < MAP_WIDTH * MAP_HEIGHT * 0.5) {
+      return null;
+    }
+    return best;
+  }
+
+  function handleDownloadHtml() {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const svgEl = findMapSvgElement(container);
+    if (!svgEl) return;
+
+    // Clone SVG and annotate marker groups with data-iata for tooltip interactivity
+    const svgClone = svgEl.cloneNode(true) as SVGElement;
+    svgClone.setAttribute("width", "100%");
+    svgClone.removeAttribute("height");
+    svgClone.style.cssText = "display:block;";
+
+    // Marker groups are <g transform="translate(...)"> elements whose direct children
+    // include a circle with stroke="white" and no nested <g transform> children.
+    const isMarkerGroup = (g: Element): boolean => {
+      if (!g.getAttribute("transform")?.startsWith("translate(")) return false;
+      if (g.querySelector("g[transform]")) return false;
+      return !!g.querySelector('circle[stroke="white"]');
+    };
+    const cloneMarkerGroups = Array.from(svgClone.querySelectorAll("g[transform]")).filter(isMarkerGroup);
+    visiblePoints.forEach((point, i) => {
+      if (cloneMarkerGroups[i]) {
+        cloneMarkerGroups[i].setAttribute("data-iata", point.iata);
+        (cloneMarkerGroups[i] as SVGElement).style.cursor = "pointer";
+      }
+    });
+
+    const svgString = new XMLSerializer().serializeToString(svgClone);
+
+    const isDark = document.documentElement.classList.contains("dark");
+    const dateStr = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+    // Palette derived from Tailwind tokens used in the live card
+    const bgPage = isDark ? "#0a0f1e" : "#f1f5f9";
+    const bgCard = isDark ? "rgba(15,23,42,0.97)" : "rgba(255,255,255,0.97)";
+    const borderCard = isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.06)";
+    const textPrimary = isDark ? "#ffffff" : "#0f172a";
+    const textSecondary = isDark ? "#94a3b8" : "#64748b";
+    const textMuted = isDark ? "#64748b" : "#94a3b8";
+    const tooltipBg = isDark ? "rgba(2,6,23,0.97)" : "rgba(255,255,255,0.97)";
+    const tooltipBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)";
+    const tooltipVolume = isDark ? "#e2e8f0" : "#334155";
+
+    const activeLegendItems = legendItems.filter((item) => mapControls[item.key]);
+    const legendHtml = activeLegendItems
+      .map(
+        (item) =>
+          `<span class="legend-item"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="5.5" fill="${item.color}"/></svg>${item.label}</span>`
+      )
+      .join("");
+
+    const pointsJson = JSON.stringify(
+      visiblePoints.map((p) => ({
+        iata: p.iata,
+        city: p.city,
+        country: p.country,
+        apiVolume: p.apiVolume,
+        clientVolume: p.clientVolume,
+      }))
+    );
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Overlap Map \u2014 ${dateStr}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: ${bgPage};
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .card {
+      background: ${bgCard};
+      border-radius: 2rem;
+      padding: 1.5rem;
+      max-width: 1100px;
+      width: 100%;
+      box-shadow: 0 0 0 1px ${borderCard}, 0 8px 32px -4px rgba(0,0,0,0.14);
+    }
+    .eyebrow {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: ${textMuted};
+    }
+    .title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: ${textPrimary};
+      margin-top: 0.45rem;
+    }
+    .subtitle {
+      font-size: 0.8rem;
+      color: ${textSecondary};
+      margin-top: 0.2rem;
+    }
+    .map-wrap {
+      margin-top: 1rem;
+      border-radius: 1.25rem;
+      overflow: hidden;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: ${textSecondary};
+      background: ${isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)"};
+      border: 1px solid ${borderCard};
+      border-radius: 999px;
+      padding: 0.3rem 0.65rem;
+    }
+    .footer {
+      margin-top: 0.85rem;
+      font-size: 0.68rem;
+      color: ${textMuted};
+    }
+    #tooltip {
+      position: fixed;
+      display: none;
+      background: ${tooltipBg};
+      border: 1px solid ${tooltipBorder};
+      border-radius: 1rem;
+      padding: 0.7rem 0.85rem;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      box-shadow: 0 20px 40px -8px rgba(0,0,0,0.2);
+      pointer-events: none;
+      z-index: 9999;
+      min-width: 190px;
+    }
+    #tooltip .tt-iata { font-weight: 600; color: ${textPrimary}; }
+    #tooltip .tt-meta { color: ${textSecondary}; }
+    #tooltip .tt-vol { color: ${tooltipVolume}; margin-top: 0.4rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <p class="eyebrow">Visualization</p>
+    <h1 class="title">Global Overlap Map</h1>
+    <p class="subtitle">Exported ${dateStr}</p>
+    <div class="map-wrap">${svgString}</div>
+    ${activeLegendItems.length > 0 ? `<div class="legend">${legendHtml}</div>` : ""}
+    <p class="footer">Generated by Map Overlap Tool</p>
+  </div>
+  <div id="tooltip">
+    <div class="tt-iata" id="tt-iata"></div>
+    <div class="tt-meta" id="tt-type"></div>
+    <div class="tt-meta" id="tt-loc"></div>
+    <div class="tt-vol" id="tt-api"></div>
+    <div class="tt-vol" id="tt-client"></div>
+  </div>
+  <script>
+    (function () {
+      var POINTS = ${pointsJson};
+      var CLIENT_LABEL = ${JSON.stringify(clientLabel)};
+      var VOL_LABEL = ${JSON.stringify(volumeUnitsLabel)};
+      var byIata = {};
+      POINTS.forEach(function (p) { byIata[p.iata] = p; });
+
+      var tooltip = document.getElementById("tooltip");
+      var ttIata = document.getElementById("tt-iata");
+      var ttType = document.getElementById("tt-type");
+      var ttLoc = document.getElementById("tt-loc");
+      var ttApi = document.getElementById("tt-api");
+      var ttClient = document.getElementById("tt-client");
+
+      function fmt(n) { return new Intl.NumberFormat("en-US").format(n); }
+      function label(p) {
+        if (p.apiVolume > 0 && p.clientVolume > 0) return "Overlap Destination";
+        if (p.apiVolume > 0) return "API Destination";
+        return CLIENT_LABEL + " Destination";
+      }
+
+      function showTip(e, p) {
+        ttIata.textContent = p.iata;
+        ttType.textContent = label(p);
+        ttLoc.textContent = p.city + ", " + p.country;
+        ttApi.textContent = "API " + VOL_LABEL + ": " + fmt(p.apiVolume);
+        ttClient.textContent = CLIENT_LABEL + " " + VOL_LABEL + ": " + fmt(p.clientVolume);
+        tooltip.style.display = "block";
+        moveTip(e);
+      }
+      function moveTip(e) {
+        var x = e.clientX + 16;
+        var y = e.clientY + 16;
+        var tw = tooltip.offsetWidth;
+        var th = tooltip.offsetHeight;
+        if (x + tw > window.innerWidth - 8) x = e.clientX - tw - 12;
+        if (y + th > window.innerHeight - 8) y = e.clientY - th - 12;
+        tooltip.style.left = x + "px";
+        tooltip.style.top = y + "px";
+      }
+      function hideTip() { tooltip.style.display = "none"; }
+
+      document.querySelectorAll("g[data-iata]").forEach(function (g) {
+        var iata = g.getAttribute("data-iata");
+        var p = byIata[iata];
+        if (!p) return;
+        g.addEventListener("mouseenter", function (e) { showTip(e, p); });
+        g.addEventListener("mousemove", function (e) { moveTip(e); });
+        g.addEventListener("mouseleave", hideTip);
+      });
+    })();
+  </script>
+</body>
+</html>`;
+
+    downloadHtmlFile("overlap-map.html", html);
+  }
+
   function handleGlobePointerDown(event: MouseEvent<HTMLDivElement>) {
     if (event.button !== 0) {
       return;
@@ -524,6 +779,20 @@ export function OverlapMap({ points, region, clientLabel, volumeUnitsLabel, colo
             >
               Reset View
             </button>
+            {visiblePoints.length > 0 ? (
+              <button
+                type="button"
+                onClick={handleDownloadHtml}
+                title="Download map as a self-contained HTML file"
+                className="subtle-chip inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium text-slate-700 transition dark:text-slate-200"
+              >
+                <svg aria-hidden="true" viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10 3v9M6.5 8.5 10 12l3.5-3.5" />
+                  <path d="M3 14v1.5A1.5 1.5 0 0 0 4.5 17h11A1.5 1.5 0 0 0 17 15.5V14" />
+                </svg>
+                Export HTML
+              </button>
+            ) : null}
           </div>
           <div className="flex flex-wrap items-center justify-end gap-2">
             {legendItems.map((item) => (
