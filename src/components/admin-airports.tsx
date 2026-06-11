@@ -8,6 +8,11 @@ import { InputField } from "@/components/ui/field";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Surface } from "@/components/ui/surface";
 import { AirportReference, SessionState } from "@/lib/types";
+import { downloadTextFile } from "@/lib/utils";
+
+function csvEscape(value: string) {
+  return /[",\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+}
 
 const emptyForm: AirportReference = {
   iata: "",
@@ -122,6 +127,14 @@ export function AdminAirports() {
     await loadAirports();
   }
 
+  function handleExportCsv() {
+    const header = "IATA,city,country,region,latitude,longitude";
+    const rows = sortedAirports.map(
+      (a) => `${a.iata},${csvEscape(a.city)},${csvEscape(a.country)},${csvEscape(a.region)},${a.latitude},${a.longitude}`
+    );
+    downloadTextFile("airport-reference.csv", [header, ...rows].join("\n"));
+  }
+
   async function handleBulkUpload(file: File) {
     const text = await file.text();
     const { parseAirportCsvText } = await import("@/lib/csv");
@@ -178,6 +191,9 @@ export function AdminAirports() {
           <a href="/templates/airport-master-template.csv" className="brand-btn-secondary inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium">
             Download Template
           </a>
+          <Button onClick={handleExportCsv} variant="secondary" size="sm" disabled={airports.length === 0}>
+            Export CSV
+          </Button>
           <Button onClick={handleLogout} variant="secondary" size="sm">
             Sign Out
           </Button>
